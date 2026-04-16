@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: adguard-home
-          image: adguard/adguardhome:v0.107.73
+          image: adguard/adguardhome:v0.107.74
           imagePullPolicy: IfNotPresent
           ports:
             - name: dns-udp
