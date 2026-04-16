@@ -7,5 +7,6 @@
   "kubernetes": {
     "managerFilePatterns": ["/\\.yaml$/"]
   },
-  "reviewers": ["required:emreorta"]
+  "reviewers": ["emreorta"],
+  "assignees": ["emreorta"]
 }
