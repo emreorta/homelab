@@ -19,6 +19,13 @@ jobs:
         uses: fluxcd/flux2/action@v2.8.5
 
       - name: Validate Flux manifests
+        env:
+          DOMAIN: example.com
+          METALLB_RANGE: 10.0.0.1-10.0.0.254
+          IMMICH_LB_IP: 10.0.0.1
+          ADGUARD_LB_IP: 10.0.0.2
+          LDAP_BASE_DN: dc=example,dc=com
+          ACME_EMAIL: acme@example.com
         run: |
           kubectl kustomize infrastructure/controllers/ | flux envsubst --strict
           kubectl kustomize infrastructure/configs/ | flux envsubst --strict
