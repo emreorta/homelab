@@ -1,0 +1,161 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: enforce-rolling-update
+spec:
+  rules:
+  - name: set-rolling-update
+    match:
+      resources:
+        kinds:
+        - Deployment
+    mutate:
+      patchStrategicMerge:
+        spec:
+          strategy:
+            type: RollingUpdate
+            rollingUpdate:
+              maxSurge: 1
+              maxUnavailable: 0
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: readiness-probe-warning
+spec:
+  validationFailureAction: enforce
+  background: true
+  rules:
+  - name: warn-readiness-probe
+    match:
+      resources:
+        kinds:
+          - Deployment
+    validate:
+      message: "Readiness probe is missing."
+      pattern:
+        spec:
+          template:
+            spec:
+              containers:
+                - name: "*"
+                  readinessProbe:
+                    httpGet:
+                      path: "*"
+                      port: "*"
+      validationFailureAction: warn
+
+  - name: warn-liveness-probe
+    match:
+      resources:
+        kinds:
+          - Deployment
+    validate:
+      message: "Liveness probe is missing."
+      pattern:
+        spec:
+          template:
+            spec:
+              containers:
+                - name: "*"
+                  livenessProbe:
+                    httpGet:
+                      path: "*"
+                      port: "*"
+      validationFailureAction: warn
+
+  - name: warn-resource-requests
+    match:
+      resources:
+        kinds:
+          - Deployment
+    validate:
+      message: "Resource config for CPU and/or memory requests is missing."
+      pattern:
+        spec:
+          template:
+            spec:
+              containers:
+                - name: "*"
+                  resources:
+                    requests:
+                      cpu: "*"
+                      memory: "*"
+      validationFailureAction: warn
+
+  - name: warn-resource-limits
+    match:
+      resources:
+        kinds:
+          - Deployment
+    validate:
+      message: "Resource config for CPU and/or memory limits is missing."
+      pattern:
+        spec:
+          template:
+            spec:
+              containers:
+                - name: "*"
+                  resources:
+                    limits:
+                      cpu: "*"
+                      memory: "*"
+      validationFailureAction: warn
+
+# ---
+# apiVersion: kyverno.io/v1
+# kind: ClusterPolicy
+# metadata:
+#   name: validate-resource-config
+# spec:
+#   rules:
+#   - name: ensure-resource-config
+#     match:
+#       resources:
+#         kinds:
+#           - Deployment
+#     validate:
+#       message: "All containers must have a resource config."
+#       pattern:
+#         spec:
+#           template:
+#             spec:
+#               containers:
+#                 - name: "*"
+#                   resources:
+#                     requests:
+#                       cpu: "*"
+#                       memory: "*"
+#                     limits:
+#                       cpu: "*"
+#                       memory: "*"
+# ---
+# apiVersion: kyverno.io/v1
+# kind: ClusterPolicy
+# metadata:
+#   name: mutate-default-resources
+# spec:
+#   validationFailureAction: enforce
+#   background: true
+#   rules:
+#     - name: inject-default-resources
+#       match:
+#         resources:
+#           kinds:
+#             - Deployment
+#       mutate:
+#         foreach:
+#           - list: "request.object.spec.template.spec.containers"
+#             patchStrategicMerge:
+#               spec:
+#                 template:
+#                   spec:
+#                     containers:
+#                       - name: "{{ element.name }}"
+#                         resources:
+#                           requests:
+#                             cpu: "10m"
+#                             memory: "32Mi"
+#                           limits:
+#                             cpu: "50m"
+#                             memory: "64Mi"

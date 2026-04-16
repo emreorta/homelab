@@ -1,0 +1,19 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: bentopdf
+  namespace: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`pdf.${DOMAIN}`)
+      kind: Rule
+      middlewares:
+        - name: authelia-auth
+          namespace: traefik
+      services:
+        - name: bentopdf
+          port: 80
+          namespace: bentopdf
+  tls: {}

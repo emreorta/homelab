@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authelia-oidc-clients
+  namespace: authelia
+data:
+  oidc-clients.yml: |
+    identity_providers:
+      oidc:
+        clients:
+          - client_id: "actual-budget"
+            client_name: "Actual Budget"
+            client_secret: "$pbkdf2-sha512$310000$jOBh0MMWLwomZOMBe40eNw$iYnAOER.Y.Np1ju4Ss8EtY2gcJkdAniDWGFZOozcisfwsAYRwKaliXdteCCn7ldVavAWokB1z4f/1r6cPxH3Dw"
+            public: false
+            authorization_policy: "two_factor"
+            redirect_uris:
+              - "https://budget.${DOMAIN}/openid/callback"
+
+          - client_id: "immich"
+            client_name: "Immich"
+            client_secret: "$pbkdf2-sha512$310000$RqDz.eN7yYrczkPPVa/1YA$pYtP08d4gn.p0RaPZdoM6d8EDg.a.3LUOWReTAEwpkSlhc9UrIrMX7/JmDcYf1qQ0GGrwwuujjep.FcvDdYaYA"
+            token_endpoint_auth_method: "client_secret_post"
+            public: false
+            authorization_policy: "two_factor"
+            redirect_uris:
+              - 'https://photos.${DOMAIN}/auth/login'
+              - 'https://photos.${DOMAIN}/user-settings'
+              - 'app.immich:///oauth-callback'
+
+          - client_id: "linkding"
+            client_name: "Linkding"
+            client_secret: "$pbkdf2-sha512$310000$CFdvo2DoE9dRMyeiZUUtXA$xWHenH2z2uSQKx.Cbdl9qQIXKLUjCTszkkfCcon.X/C7ax4yKYiioCemQaD6qv/VTFa3Ki0RmQ1jmUwij1F0Uw"
+            token_endpoint_auth_method: "client_secret_post"
+            public: false
+            authorization_policy: "two_factor"
+            redirect_uris:
+              - "https://links.${DOMAIN}/oidc/callback/"

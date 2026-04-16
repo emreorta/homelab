@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authelia
+  namespace: authelia
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: authelia
+  template:
+    metadata:
+      labels:
+        app: authelia
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+      enableServiceLinks: false
+      containers:
+        - name: authelia
+          image: authelia/authelia:4.39.19
+          imagePullPolicy: IfNotPresent
+          command:
+            - authelia
+            - --config=/var/lib/authelia/config/main/configuration.yml
+            - --config=/var/lib/authelia/config/oidc/oidc-clients.yml
+          ports:
+            - containerPort: 9091
+          env:
+            - name: "AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET_FILE"
+              value: "/app/secrets/JWT_SECRET"
+            - name: "AUTHELIA_SESSION_SECRET_FILE"
+              value: "/app/secrets/SESSION_SECRET"
+            - name: "AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE"
+              value: "/app/secrets/STORAGE_ENCRYPTION_KEY"
+            - name: "AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD_FILE"
+              value: "/app/secrets/AUTHENTICATION_BACKEND_LDAP_PASSWORD"
+            - name: "AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET_FILE"
+              value: "/app/secrets/OIDC_HMAC_SECRET"
+            - name: "X_AUTHELIA_CONFIG_FILTERS"
+              value: "template"
+            - name: "AUTHELIA_NOTIFIER_SMTP_PASSWORD_FILE"
+              value: "/app/secrets/SMTP_PASSWORD"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "128Mi"
+            limits:
+              memory: "256Mi"
+          volumeMounts:
+            - name: authelia-config
+              mountPath: /var/lib/authelia/config/main
+            - name: authelia-oidc-clients
+              mountPath: /var/lib/authelia/config/oidc
+            - name: authelia-data
+              mountPath: /var/lib/authelia/data
+            - mountPath: "/app/secrets"
+              name: "secrets"
+              readOnly: true
+      volumes:
+        - name: authelia-config
+          configMap:
+            name: authelia-config
+        - name: authelia-oidc-clients
+          configMap:
+            name: authelia-oidc-clients
+        - name: authelia-data
+          persistentVolumeClaim:
+            claimName: authelia-pvc
+        - name: secrets
+          secret:
+            secretName: "authelia-secrets"
+            items:
+              - key: JWT_SECRET
+                path: JWT_SECRET
+              - key: SESSION_SECRET
+                path: SESSION_SECRET
+              - key: STORAGE_ENCRYPTION_KEY
+                path: STORAGE_ENCRYPTION_KEY
+              - key: AUTHENTICATION_BACKEND_LDAP_PASSWORD
+                path: AUTHENTICATION_BACKEND_LDAP_PASSWORD
+              - key: OIDC_HMAC_SECRET
+                path: OIDC_HMAC_SECRET
+              - key: OIDC_JWKS_KEY
+                path: OIDC_JWKS_KEY
+              - key: SMTP_PASSWORD
+                path: SMTP_PASSWORD

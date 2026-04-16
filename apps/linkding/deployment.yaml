@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: linkding
+  namespace: linkding
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: linkding
+  template:
+    metadata:
+      labels:
+        app: linkding
+    spec:
+      containers:
+        - name: linkding
+          image: sissbruecker/linkding:1.45.0-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9090
+          env:
+            - name: LD_CONTAINER_NAME
+              value: "linkding"
+            - name: LD_HOST_PORT
+              value: "9090"
+            - name: LD_HOST_DATA_DIR
+              value: "/etc/linkding/data"
+            - name: LD_SUPERUSER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: linkding-superuser
+                  key: name
+            - name: LD_SUPERUSER_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: linkding-superuser
+                  key: password
+            - name: LD_ENABLE_OIDC
+              value: "True"
+            - name: LD_CSRF_TRUSTED_ORIGINS
+              value: "https://auth.${DOMAIN}"
+            - name: OIDC_RP_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: linkding-oidc
+                  key: OIDC_RP_CLIENT_SECRET
+            - name: OIDC_RP_CLIENT_ID
+              value: "linkding"
+            - name: OIDC_OP_AUTHORIZATION_ENDPOINT
+              value: "https://auth.${DOMAIN}/api/oidc/authorization"
+            - name: OIDC_OP_TOKEN_ENDPOINT
+              value: "https://auth.${DOMAIN}/api/oidc/token"
+            - name: OIDC_OP_USER_ENDPOINT
+              value: "https://auth.${DOMAIN}/api/oidc/userinfo"
+            - name: OIDC_OP_JWKS_ENDPOINT
+              value: "https://auth.${DOMAIN}/jwks.json"
+            - name: OIDC_TOKEN_USE_BASIC_AUTH
+              value: "False"
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "128Mi"
+            limits:
+              memory: "512Mi"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 9090
+            initialDelaySeconds: 60
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 9090
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          volumeMounts:
+            - name: linkding-data
+              mountPath: /etc/linkding/data
+      volumes:
+        - name: linkding-data
+          persistentVolumeClaim:
+            claimName: linkding-pvc

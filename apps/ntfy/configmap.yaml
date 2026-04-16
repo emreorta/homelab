@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ntfy-config
+  namespace: ntfy
+data:
+  server.yml: |
+    # Template: https://github.com/binwiederhier/ntfy/blob/main/server/server.yml
+    default-host: "https://ntfy.${DOMAIN}"
+    base-url: "https://ntfy.${DOMAIN}"
+    upstream-base-url: "https://ntfy.sh"
+    listen-http: ":80"
+    cache-file: "/var/cache/ntfy/cache.db"
+    behind-proxy: true
+    proxy-forwarded-header: "X-Forwarded-For"
+    attachment-cache-dir: "/var/cache/ntfy/attachments"
+    keepalive-interval: "45s"
+    auth-file: "/var/cache/ntfy/user.db"
+    auth-default-access: "deny-all"
+    web-root: /

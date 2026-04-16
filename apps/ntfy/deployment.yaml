@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ntfy
+  namespace: ntfy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ntfy
+  template:
+    metadata:
+      labels:
+        app: ntfy
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+        - name: ntfy
+          image: binwiederhier/ntfy:v2.21
+          args: ["serve", "--config", "/etc/ntfy/server.yml"]
+          resources:
+            requests:
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+          ports:
+            - containerPort: 80
+              name: http
+          volumeMounts:
+            - name: ntfy-config
+              mountPath: "/etc/ntfy"
+              readOnly: true
+            - name: ntfy-data
+              mountPath: "/var/cache/ntfy"
+      volumes:
+        - name: ntfy-config
+          configMap:
+            name: ntfy-config
+            items:
+              - key: server.yml
+                path: server.yml
+        - name: ntfy-data
+          persistentVolumeClaim:
+            claimName: ntfy-pvc

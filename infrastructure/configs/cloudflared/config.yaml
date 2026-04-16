@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflared-config
+  namespace: cloudflared
+data:
+  config.yaml: |
+    tunnel: homelab-test
+    credentials-file: /etc/cloudflared/creds/credentials.json
+    origincert: /etc/cloudflared/creds/cert.pem
+    ingress:
+      - hostname: "*.${DOMAIN}"
+        service: https://traefik.traefik.svc.cluster.local:443
+        originRequest:
+          noTLSVerify: true
+      - service: http_status:404

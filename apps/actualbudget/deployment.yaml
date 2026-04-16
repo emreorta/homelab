@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: actual-budget
+  namespace: actual-budget
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: actual-budget
+  template:
+    metadata:
+      labels:
+        app: actual-budget
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+        - name: actual-budget
+          image: docker.io/actualbudget/actual-server:26.4.0-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5006
+          env:
+            - name: ACTUAL_PORT
+              value: "5006"
+            - name: ACTUAL_LOGIN_METHOD
+              value: "openid"
+            - name: ACTUAL_DATA_DIR
+              value: "/data"
+            - name: ACTUAL_OPENID_DISCOVERY_URL
+              value: "https://auth.${DOMAIN}/.well-known/openid-configuration"
+            - name: ACTUAL_OPENID_CLIENT_ID
+              value: "actual-budget"
+            - name: ACTUAL_OPENID_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: actual-budget-secrets
+                  key: OPENID_CLIENT_SECRET
+            - name: ACTUAL_OPENID_SERVER_HOSTNAME
+              value: "https://budget.${DOMAIN}"
+            - name: ACTUAL_OPENID_AUTH_METHOD
+              value: "openid"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "128Mi"
+            limits:
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5006
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5006
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          volumeMounts:
+            - name: actual-budget-data
+              mountPath: /data
+      volumes:
+        - name: actual-budget-data
+          persistentVolumeClaim:
+            claimName: actual-budget-pvc

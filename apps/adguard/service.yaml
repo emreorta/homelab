@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: adguard-dns
+  namespace: adguard
+  annotations:
+    metallb.io/loadBalancerIPs: ${ADGUARD_LB_IP}
+spec:
+  selector:
+    app: adguard-home
+  ports:
+    - name: dns-udp
+      port: 53
+      protocol: UDP
+      targetPort: 53
+    - name: dns-tcp
+      port: 53
+      protocol: TCP
+      targetPort: 53
+  externalTrafficPolicy: Local
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adguard-web
+  namespace: adguard
+spec:
+  selector:
+    app: adguard-home
+  ports:
+    - name: admin-setup
+      port: 3000
+      targetPort: 3000
+    - name: http
+      port: 80
+      targetPort: 80
+  type: ClusterIP

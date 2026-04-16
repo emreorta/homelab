@@ -1,0 +1,25 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: adguard
+  namespace: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`dns.${DOMAIN}`) && PathPrefix(`/dns-query`)
+      kind: Rule
+      services:
+        - name: adguard-web
+          port: 80
+          namespace: adguard
+    - match: Host(`dns.${DOMAIN}`) && PathPrefix(`/`)
+      kind: Rule
+      middlewares:
+        - name: authelia-auth
+          namespace: traefik
+      services:
+        - name: adguard-web
+          port: 80
+          namespace: adguard
+  tls: {}

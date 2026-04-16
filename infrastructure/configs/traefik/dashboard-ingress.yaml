@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-dashboard
+  namespace: traefik
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`traefik.${DOMAIN}`)
+      kind: Rule
+      middlewares:
+        - name: authelia-auth
+          namespace: traefik
+      services:
+        - name: api@internal
+          kind: TraefikService
+  tls: {}
