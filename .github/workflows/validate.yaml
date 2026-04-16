@@ -16,7 +16,7 @@ jobs:
           kubectl kustomize apps/
 
       - name: Install Flux CLI
-        uses: fluxcd/flux2/action@v2
+        uses: fluxcd/flux2/action@v2.8.5
 
       - name: Validate Flux manifests
         run: |
