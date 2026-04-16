@@ -10,6 +10,9 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-path
+  claimRef:
+    name: ntfy-pvc
+    namespace: ntfy
   hostPath:
     path: "/data/ntfy"
 ---
