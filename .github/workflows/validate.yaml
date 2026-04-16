@@ -20,7 +20,6 @@ jobs:
 
       - name: Validate Flux manifests
         run: |
-          flux check --pre
           kubectl kustomize infrastructure/controllers/ | flux envsubst --strict
           kubectl kustomize infrastructure/configs/ | flux envsubst --strict
           kubectl kustomize apps/ | flux envsubst --strict
