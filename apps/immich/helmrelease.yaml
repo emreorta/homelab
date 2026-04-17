@@ -84,4 +84,21 @@ spec:
               targetPort: 2283
 
     machine-learning:
-      enabled: false
+      enabled: true
+      controllers:
+        main:
+          containers:
+            main:
+              resources:
+                requests:
+                  cpu: "250m"
+                  memory: "512Mi"
+                limits:
+                  memory: "3Gi"
+      persistence:
+        cache:
+          enabled: true
+          size: 10Gi
+          type: persistentVolumeClaim
+          accessMode: ReadWriteMany
+          storageClass: local-path
