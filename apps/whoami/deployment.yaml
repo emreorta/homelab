@@ -16,6 +16,8 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534
+      nodeSelector:
+        kubernetes.io/hostname: k3s-3
       containers:
         - name: whoami
           image: traefik/whoami:v1.11

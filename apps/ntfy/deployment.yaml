@@ -18,6 +18,8 @@ spec:
         runAsUser: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
+      nodeSelector:
+        kubernetes.io/hostname: k3s-3
       containers:
         - name: ntfy
           image: binwiederhier/ntfy:v2.21

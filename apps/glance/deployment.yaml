@@ -21,6 +21,8 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 65534
+      nodeSelector:
+        kubernetes.io/hostname: k3s-3
       containers:
         - name: glance
           image: glanceapp/glance:v0.8.4

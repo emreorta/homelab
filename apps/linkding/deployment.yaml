@@ -18,6 +18,8 @@ spec:
       labels:
         app: linkding
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-3
       containers:
         - name: linkding
           image: sissbruecker/linkding:1.45.0-alpine

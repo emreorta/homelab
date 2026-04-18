@@ -19,6 +19,8 @@ spec:
         app: lldap
     spec:
       restartPolicy: Always
+      nodeSelector:
+        kubernetes.io/hostname: k3s-3
       containers:
         - name: lldap
           image: nitnelave/lldap:2026-01-06-alpine
