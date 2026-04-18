@@ -16,6 +16,15 @@ spec:
   install:
     createNamespace: true
   values:
+    deployment:
+      replicas: 3
+    topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: traefik
     image:
       tag: 3.6.13
     additionalArguments:
