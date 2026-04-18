@@ -23,6 +23,8 @@ spec:
         runAsUser: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
+      nodeSelector:
+        kubernetes.io/hostname: k3s-3
       containers:
         - name: silverbullet
           image: ghcr.io/silverbulletmd/silverbullet:2.6.1

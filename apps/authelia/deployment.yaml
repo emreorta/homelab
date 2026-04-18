@@ -24,6 +24,8 @@ spec:
         fsGroup: 1000
         fsGroupChangePolicy: Always
       enableServiceLinks: false
+      nodeSelector:
+        kubernetes.io/hostname: k3s-3
       containers:
         - name: authelia
           image: authelia/authelia:4.39.19

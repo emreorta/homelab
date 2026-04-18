@@ -22,6 +22,8 @@ spec:
         runAsNonRoot: true
         runAsUser: 65534
       serviceAccountName: pod-viewer
+      nodeSelector:
+        kubernetes.io/hostname: k3s-3
       containers:
         - name: dozzle
           image: amir20/dozzle:v10.4.1

@@ -23,6 +23,8 @@ spec:
         runAsUser: 1001
         fsGroup: 1001
         fsGroupChangePolicy: OnRootMismatch
+      nodeSelector:
+        kubernetes.io/hostname: k3s-3
       containers:
         - name: actual-budget
           image: docker.io/actualbudget/actual-server:26.4.0-alpine
