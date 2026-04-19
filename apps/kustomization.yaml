@@ -6,7 +6,6 @@ resources:
   - authelia
   - bentopdf
   - dozzle
-  - glance
   - immich
   - it-tools
   - linkding
@@ -14,4 +13,3 @@ resources:
   - ntfy
   - silverbullet
   - uptime-kuma
-  - whoami
