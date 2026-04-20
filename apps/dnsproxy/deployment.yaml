@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dnsproxy
+  namespace: dnsproxy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: dnsproxy
+  template:
+    metadata:
+      labels:
+        app: dnsproxy
+    spec:
+      containers:
+        - name: dnsproxy
+          image: adguard/dnsproxy:v0.81.1
+          args:
+            - --listen=0.0.0.0
+            - --port=53
+            - --upstream=tls://dns.emreorta.com:853
+            - --bootstrap=1.1.1.1
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "16Mi"
+            limits:
+              cpu: "50m"
+              memory: "64Mi"
+          ports:
+            - containerPort: 53
+              protocol: UDP
+              name: dns-udp
+            - containerPort: 53
+              protocol: TCP
+              name: dns-tcp

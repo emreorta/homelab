@@ -23,9 +23,12 @@ jobs:
           DOMAIN: example.com
           METALLB_RANGE: 10.0.0.1-10.0.0.254
           IMMICH_LB_IP: 10.0.0.1
-          ADGUARD_LB_IP: 10.0.0.2
+          DNSPROXY_LB_IP: 10.0.0.2
           LDAP_BASE_DN: dc=example,dc=com
           ACME_EMAIL: acme@example.com
+          FRP_SERVER_ADDR: 127.0.0.1
+          FRP_AUTH_TOKEN: dummy_token_for_validation
+          FRP_GROUP_KEY: dummy_group_key
         run: |
           kubectl kustomize infrastructure/controllers/ | flux envsubst --strict
           kubectl kustomize infrastructure/configs/ | flux envsubst --strict

@@ -5,12 +5,14 @@ metadata:
   namespace: traefik
 spec:
   entryPoints:
-    - websecure
+    - frp
   routes:
     - match: Host(`auth.${DOMAIN}`)
       kind: Rule
+      middlewares:
+        - name: frp-headers
+          namespace: traefik
       services:
         - name: authelia
           port: 80
           namespace: authelia
-  tls: {}

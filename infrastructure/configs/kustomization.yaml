@@ -5,4 +5,4 @@ resources:
   - metallb
   - traefik
   # - kyverno
-  - cloudflared
+  - frpc
