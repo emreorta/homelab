@@ -1,0 +1,65 @@
+services:
+  caddy:
+    build: ./caddy
+    container_name: caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+      - "8443:8443/udp"
+    environment:
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      - ACME_EMAIL=${ACME_EMAIL}
+      - DOMAIN=${DOMAIN}
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/data:/data/caddy
+    dns:
+      - 172.20.0.53
+    networks:
+      - proxy
+
+  frps:
+    image: fatedier/frps:v0.68.1
+    container_name: frps
+    restart: always
+    command: ["-c", "/etc/frp/frps.toml"]
+    ports:
+      - "7000:7000"
+    volumes:
+      - ./frps/frps.toml:/etc/frp/frps.toml
+    networks:
+      - proxy
+
+  adguard:
+    image: adguard/adguardhome:v0.107.74
+    container_name: adguard
+    restart: always
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "853:853/tcp"
+    volumes:
+      - ./adguard/data/work:/opt/adguardhome/work
+      - ./adguard/data/conf:/opt/adguardhome/conf
+      - ${CADDY_CERTS_PATH}:/certs:ro
+    networks:
+      proxy:
+        ipv4_address: 172.20.0.53
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:2.2.1
+    container_name: uptime-kuma
+    restart: always
+    volumes:
+      - ./uptime-kuma/data:/app/data
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

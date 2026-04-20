@@ -1,0 +1,9 @@
+.env
+frps/frps.toml
+
+caddy/data/*
+adguard/data/work/*
+adguard/data/conf/*
+uptime-kuma/data/*
+
+!**/.gitkeep

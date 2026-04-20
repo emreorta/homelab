@@ -5,12 +5,14 @@ metadata:
   namespace: traefik
 spec:
   entryPoints:
-    - websecure
+    - frp
   routes:
     - match: Host(`photos.${DOMAIN}`)
       kind: Rule
+      middlewares:
+        - name: frp-headers
+          namespace: traefik
       services:
         - name: immich-server
           port: 2283
           namespace: immich
-  tls: {}

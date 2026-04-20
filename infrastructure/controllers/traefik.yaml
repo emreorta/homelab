@@ -44,6 +44,13 @@ spec:
               to: websecure
               scheme: https
               permanent: true
+      frp:
+        port: 8081
+        expose:
+          default: true
+        exposedPort: 8080
+        forwardedHeaders:
+          insecure: true
     resources:
       requests:
         cpu: "100m"
