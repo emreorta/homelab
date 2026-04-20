@@ -12,4 +12,5 @@ resources:
   - lldap
   - ntfy
   - silverbullet
+  - newt
   - uptime-kuma
