@@ -16,3 +16,14 @@ spec:
       - Remote-Groups
       - Remote-Email
       - Remote-Name
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: frp-headers
+  namespace: traefik
+spec:
+  headers:
+    customRequestHeaders:
+      X-Forwarded-Proto: "https"
+      X-Forwarded-Port: "443"

@@ -5,15 +5,16 @@ metadata:
   namespace: traefik
 spec:
   entryPoints:
-    - websecure
+    - frp
   routes:
     - match: Host(`pdf.${DOMAIN}`)
       kind: Rule
       middlewares:
+        - name: frp-headers
+          namespace: traefik
         - name: authelia-auth
           namespace: traefik
       services:
         - name: bentopdf
           port: 80
           namespace: bentopdf
-  tls: {}

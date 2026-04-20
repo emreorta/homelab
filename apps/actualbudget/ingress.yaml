@@ -5,10 +5,13 @@ metadata:
   namespace: traefik
 spec:
   entryPoints:
-    - websecure
+    - frp
   routes:
     - match: Host(`budget.${DOMAIN}`)
       kind: Rule
+      middlewares:
+        - name: frp-headers
+          namespace: traefik
       services:
         - name: actual-budget
           port: 80

@@ -1,0 +1,29 @@
+{
+    email {env.ACME_EMAIL}
+}
+
+dns.emreorta.com {
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+    reverse_proxy adguard:80
+}
+
+status.emreorta.com {
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+    reverse_proxy uptime-kuma:3001
+}
+
+*.emreorta.com {
+    tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+    reverse_proxy frps:8080 {
+        header_up X-Forwarded-Proto https
+        header_up X-Forwarded-Host {host}
+        header_up X-Forwarded-Port 443
+        header_up X-Real-IP {remote_host}
+    }
+}

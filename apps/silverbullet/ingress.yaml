@@ -5,15 +5,16 @@ metadata:
   namespace: traefik
 spec:
   entryPoints:
-    - websecure
+    - frp
   routes:
     - match: Host(`notes.${DOMAIN}`)
       kind: Rule
       middlewares:
+        - name: frp-headers
+          namespace: traefik
         - name: authelia-auth
           namespace: traefik
       services:
         - name: silverbullet
           port: 80
           namespace: silverbullet
-  tls: {}

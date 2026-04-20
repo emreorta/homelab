@@ -26,6 +26,8 @@ jobs:
           ADGUARD_LB_IP: 10.0.0.2
           LDAP_BASE_DN: dc=example,dc=com
           ACME_EMAIL: acme@example.com
+          FRP_SERVER_ADDR: 127.0.0.1
+          FRP_AUTH_TOKEN: dummy_token_for_validation
         run: |
           kubectl kustomize infrastructure/controllers/ | flux envsubst --strict
           kubectl kustomize infrastructure/configs/ | flux envsubst --strict

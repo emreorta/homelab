@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frpc-config
+  namespace: frpc
+data:
+  frpc.toml: |
+    serverAddr = "${FRP_SERVER_ADDR}"
+    serverPort = 7000
+    auth.token = "${FRP_AUTH_TOKEN}"
+
+    [[proxies]]
+    name = "homelab-wildcard"
+    type = "http"
+    localIP = "traefik.traefik.svc.cluster.local"
+    localPort = 8080
+    customDomains = ["*.emreorta.com"]
+    transport.useEncryption = true
+    transport.useCompression = true
+    loadBalancer.group = "homelab"
+    loadBalancer.groupKey = "${FRP_AUTH_TOKEN}"

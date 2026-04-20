@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frpc
+  namespace: frpc
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frpc
+  template:
+    metadata:
+      labels:
+        app: frpc
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      initContainers:
+        - name: render-config
+          image: bhgedigital/envsubst:latest
+          command: ["sh", "-c", "envsubst < /template/frpc.toml > /etc/frp/frpc.toml"]
+          env:
+            - name: FRP_SERVER_ADDR
+              valueFrom:
+                secretKeyRef:
+                  name: frpc-secrets
+                  key: FRP_SERVER_ADDR
+            - name: FRP_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: frpc-secrets
+                  key: FRP_AUTH_TOKEN
+          volumeMounts:
+            - name: config-template
+              mountPath: /template
+            - name: config
+              mountPath: /etc/frp
+      containers:
+        - name: frpc
+          image: fatedier/frpc:v0.68.1
+          imagePullPolicy: IfNotPresent
+          args: ["-c", "/etc/frp/frpc.toml"]
+          volumeMounts:
+            - name: config
+              mountPath: /etc/frp
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "32Mi"
+            limits:
+              memory: "64Mi"
+      volumes:
+        - name: config-template
+          configMap:
+            name: frpc-config
+        - name: config
+          emptyDir: {}
