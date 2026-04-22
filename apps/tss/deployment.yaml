@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tss
+  namespace: tss
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: tss
+  template:
+    metadata:
+      labels:
+        app: tss
+    spec:
+      # entrypoint checks if it's running as root and then drops to `taskchammpion`
+      # user which is a non-root user.
+      securityContext: {}
+      nodeSelector:
+        kubernetes.io/hostname: k3s-2
+      containers:
+        - name: tss
+          image: ghcr.io/gothenburgbitfactory/taskchampion-sync-server:0.7.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: RUST_LOG
+              value: "info"
+            - name: DATA_DIR
+              value: "/var/lib/taskchampion-sync-server/data"
+            - name: LISTEN
+              value: "0.0.0.0:8080"
+            - name: CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: tss-secrets
+                  key: TASKCHAMPION_SYNC_SERVER_CLIENT_ID
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              memory: "128Mi"
+          volumeMounts:
+            - name: tss-data
+              mountPath: /var/lib/taskchampion-sync-server/data
+      volumes:
+        - name: tss-data
+          persistentVolumeClaim:
+            claimName: tss-pvc

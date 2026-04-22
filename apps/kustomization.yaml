@@ -12,3 +12,4 @@ resources:
   - lldap
   - ntfy
   - silverbullet
+  - tss
