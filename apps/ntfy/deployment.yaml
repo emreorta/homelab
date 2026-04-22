@@ -22,7 +22,7 @@ spec:
         kubernetes.io/hostname: k3s-3
       containers:
         - name: ntfy
-          image: binwiederhier/ntfy:v2.21
+          image: binwiederhier/ntfy:v2.22
           args: ["serve", "--config", "/etc/ntfy/server.yml"]
           resources:
             requests:
