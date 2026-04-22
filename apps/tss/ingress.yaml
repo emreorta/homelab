@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: tss
+  namespace: traefik
+spec:
+  entryPoints:
+    - frp
+  routes:
+    - match: Host(`tss.${DOMAIN}`)
+      kind: Rule
+      middlewares:
+        - name: frp-headers
+          namespace: traefik
+      services:
+        - name: tss
+          port: 80
+          namespace: tss
