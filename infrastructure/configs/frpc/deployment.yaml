@@ -32,6 +32,10 @@ spec:
                 secretKeyRef:
                   name: frpc-secrets
                   key: FRP_AUTH_TOKEN
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
           volumeMounts:
             - name: config-template
               mountPath: /template
@@ -57,3 +61,13 @@ spec:
             name: frpc-config
         - name: config
           emptyDir: {}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - frpc
+              topologyKey: "kubernetes.io/hostname"

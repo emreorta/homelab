@@ -10,7 +10,7 @@ data:
     auth.token = "$${FRP_AUTH_TOKEN}"
 
     [[proxies]]
-    name = "homelab-wildcard"
+    name = "homelab-wildcard-$${NODE_NAME}"
     type = "http"
     localIP = "traefik.traefik.svc.cluster.local"
     localPort = 8080
