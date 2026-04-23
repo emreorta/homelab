@@ -14,7 +14,7 @@ services:
       - DOMAIN=${DOMAIN}
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
-      - ./caddy/data:/data/caddy
+      - /opt/caddy/data:/data/caddy
     dns:
       - 172.20.0.53
     networks:
@@ -41,8 +41,8 @@ services:
       - "53:53/udp"
       - "853:853/tcp"
     volumes:
-      - ./adguard/data/work:/opt/adguardhome/work
-      - ./adguard/data/conf:/opt/adguardhome/conf
+      - /opt/adguard/data/work:/opt/adguardhome/work
+      - /opt/adguard/data/conf:/opt/adguardhome/conf
       - ${CADDY_CERTS_PATH}:/certs:ro
     networks:
       proxy:
@@ -53,7 +53,7 @@ services:
     container_name: uptime-kuma
     restart: always
     volumes:
-      - ./uptime-kuma/data:/app/data
+      - /opt/uptime-kuma/data:/app/data
     networks:
       - proxy
 
