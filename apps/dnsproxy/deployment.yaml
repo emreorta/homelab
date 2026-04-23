@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: dnsproxy
-          image: adguard/dnsproxy:v0.81.1
+          image: adguard/dnsproxy:v0.81.2
           args:
             - --listen=0.0.0.0
             - --port=53
