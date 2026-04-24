@@ -5,6 +5,11 @@ metadata:
   namespace: dnsproxy
 spec:
   replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   selector:
     matchLabels:
       app: dnsproxy
@@ -35,3 +40,13 @@ spec:
             - containerPort: 53
               protocol: TCP
               name: dns-tcp
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - frpc
+              topologyKey: "kubernetes.io/hostname"
