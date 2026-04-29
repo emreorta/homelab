@@ -20,7 +20,7 @@ spec:
     spec:
       restartPolicy: Always
       nodeSelector:
-        kubernetes.io/hostname: k3s-3
+        kubernetes.io/hostname: k3s-2
       containers:
         - name: lldap
           image: nitnelave/lldap:2026-01-06-alpine
