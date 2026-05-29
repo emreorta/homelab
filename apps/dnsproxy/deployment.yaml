@@ -24,7 +24,7 @@ spec:
           args:
             - --listen=0.0.0.0
             - --port=53
-            - --upstream=tls://dns.emreorta.com:853
+            - --upstream=tls://dns.${DOMAIN}:853
             - --bootstrap=1.1.1.1
           resources:
             requests:
