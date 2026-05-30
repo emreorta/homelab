@@ -35,3 +35,12 @@ data:
             authorization_policy: "two_factor"
             redirect_uris:
               - "https://links.${DOMAIN}/oidc/callback/"
+
+          - client_id: "miniflux"
+            client_name: "Miniflux"
+            client_secret: "$pbkdf2-sha512$310000$ofz4g1ejnEkw6LG4PzBm4w$CjFrCG4Hl9O6zjPC9PY1FiNk7AYzuIhoLcEHUC5B8G9O7xB4VzoNKwxMYViEqz4hWyg8qiDHIqQbAcjGIDXJFQ"
+            token_endpoint_auth_method: "client_secret_basic"
+            public: false
+            authorization_policy: "two_factor"
+            redirect_uris:
+              - "https://rss.${DOMAIN}/oauth2/oidc/callback"

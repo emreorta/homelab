@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: miniflux-postgres
+  namespace: miniflux
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: miniflux-postgres
+  template:
+    metadata:
+      labels:
+        app: miniflux-postgres
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-2
+      containers:
+        - name: postgres
+          image: postgres:18
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: miniflux-db
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: miniflux-db
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: miniflux-db
+                  key: POSTGRES_DB
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              memory: "512Mi"
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - miniflux
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: miniflux-postgres-pvc
