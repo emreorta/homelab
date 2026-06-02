@@ -33,7 +33,7 @@ services:
       - proxy
 
   adguard:
-    image: adguard/adguardhome:v0.107.76
+    image: adguard/adguardhome:v0.107.77
     container_name: adguard
     restart: always
     ports:
