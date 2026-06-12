@@ -39,8 +39,8 @@ data:
           policy: bypass
         - domain: "notes.${DOMAIN}"
           resources:
-            - '^/.client/*'
-            - '^/service_worker.js$'
+            - '^/\.client/.*'
+            - '^/service_worker\.js$'
           policy: bypass
         - domain: "links.${DOMAIN}"
           resources:
