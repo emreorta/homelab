@@ -26,6 +26,12 @@ spec:
             - --port=53
             - --upstream=tls://dns.${DOMAIN}:853
             - --bootstrap=1.1.1.1
+            - --bootstrap=1.0.0.1
+            - --bootstrap=8.8.8.8
+            - --bootstrap=8.8.4.4
+            - --cache
+            - --cache-optimistic
+            - --cache-size=4194304
           resources:
             requests:
               cpu: "10m"
