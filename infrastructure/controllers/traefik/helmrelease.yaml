@@ -27,7 +27,7 @@ spec:
             app.kubernetes.io/name: traefik
     image:
       repository: traefik
-      tag: 3.6.13
+      tag: v3.6.13
     additionalArguments:
       - '--serversTransport.insecureSkipVerify=true'
     service:
