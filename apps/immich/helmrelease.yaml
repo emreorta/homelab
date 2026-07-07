@@ -63,6 +63,9 @@ spec:
           storageClass: local-path
 
     server:
+      defaultPodOptions:
+        nodeSelector:
+          kubernetes.io/hostname: k3s-controlplane
       controllers:
         main:
           containers:

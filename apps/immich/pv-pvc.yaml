@@ -12,6 +12,14 @@ spec:
   storageClassName: local-path
   hostPath:
     path: "/data/immich/library"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - k3s-controlplane
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -39,6 +47,14 @@ spec:
   storageClassName: local-path
   hostPath:
     path: "/data/immich/postgres"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - k3s-controlplane
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
