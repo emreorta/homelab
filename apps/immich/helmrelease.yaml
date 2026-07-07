@@ -19,6 +19,7 @@ spec:
         containers:
           main:
             image:
+              repository: ghcr.io/immich-app/immich-server
               tag: v2.7.5
             env:
               DB_HOSTNAME: immich-postgres.immich.svc.cluster.local
