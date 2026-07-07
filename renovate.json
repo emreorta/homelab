@@ -13,6 +13,12 @@
       "/(^|/)helmrelease\\.ya?ml$/"
     ]
   },
+  "flux": {
+    "managerFilePatterns": [
+      "/(^|/)helmrelease\\.ya?ml$/",
+      "/(^|/)helm-repositories\\.ya?ml$/"
+    ]
+  },
   "reviewers": ["emreorta"],
   "assignees": ["emreorta"]
 }
