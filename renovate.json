@@ -5,7 +5,13 @@
     ":dependencyDashboard"
   ],
   "kubernetes": {
-    "managerFilePatterns": ["/\\.yaml$/"]
+    "managerFilePatterns": ["/\\.ya?ml$/"]
+  },
+  "helm-values": {
+    "managerFilePatterns": [
+      "/(^|/)values\\.ya?ml$/",
+      "/(^|/)helmrelease\\.ya?ml$/"
+    ]
   },
   "reviewers": ["emreorta"],
   "assignees": ["emreorta"]
