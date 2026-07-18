@@ -25,6 +25,8 @@ spec:
             - --listen=0.0.0.0
             - --port=53
             - --upstream=tls://dns.${DOMAIN}:853
+            - --fallback=tls://dns.adguard-dns.com
+            - --fallback=tls://dns.quad9.net
             - --bootstrap=1.1.1.1
             - --bootstrap=1.0.0.1
             - --bootstrap=8.8.8.8
