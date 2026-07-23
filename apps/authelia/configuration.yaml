@@ -11,7 +11,6 @@ data:
     log:
       level: "info"
       format: "json"
-      file_path: "/var/lib/authelia/data/authelia.log"
     authentication_backend:
       password_reset:
         disable: false
