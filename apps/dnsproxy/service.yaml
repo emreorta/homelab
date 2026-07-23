@@ -4,9 +4,13 @@ metadata:
   name: dnsproxy
   namespace: dnsproxy
   annotations:
-    metallb.io/loadBalancerIPs: ${DNSPROXY_LB_IP}
+    metallb.io/loadBalancerIPs: ${DNSPROXY_LB_IP_V4},${DNSPROXY_LB_IP_V6}
 spec:
   type: LoadBalancer
+  ipFamilyPolicy: RequireDualStack
+  ipFamilies:
+    - IPv4
+    - IPv6
   selector:
     app: dnsproxy
   ports:

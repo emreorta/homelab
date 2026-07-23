@@ -80,8 +80,6 @@ spec:
         main:
           controller: main
           type: LoadBalancer
-          annotations:
-            metallb.io/loadBalancerIPs: ${IMMICH_LB_IP}
           ports:
             http:
               port: 2283
