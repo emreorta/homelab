@@ -12,8 +12,6 @@ spec:
       middlewares:
         - name: frp-headers
           namespace: traefik
-        - name: authelia-auth
-          namespace: traefik
       services:
         - name: ntfy
           port: 80
