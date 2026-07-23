@@ -12,13 +12,18 @@ services:
       - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
       - ACME_EMAIL=${ACME_EMAIL}
       - DOMAIN=${DOMAIN}
+      - CROWDSEC_API_KEY=${CROWDSEC_API_KEY}
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
       - ./caddy/data:/data/caddy
+      - caddy-logs:/var/log/caddy
     dns:
       - 172.20.0.53
     networks:
       - proxy
+    depends_on:
+      crowdsec:
+        condition: service_healthy
 
   frps:
     image: fatedier/frps:v0.70.0
@@ -57,9 +62,36 @@ services:
     networks:
       - proxy
 
+  crowdsec:
+    image: crowdsecurity/crowdsec:v1.7.8
+    container_name: crowdsec
+    restart: always
+    environment:
+      - COLLECTIONS=crowdsecurity/caddy crowdsecurity/http-cve
+      - BOUNCER_KEY_caddy=${CROWDSEC_API_KEY}
+    volumes:
+      - ./crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+      - ./crowdsec/data:/var/lib/crowdsec/data
+      - caddy-logs:/var/log/caddy:ro
+    healthcheck:
+      test:
+        - CMD
+        - cscli
+        - lapi
+        - status
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - proxy
+
 networks:
   proxy:
     driver: bridge
     ipam:
       config:
         - subnet: 172.20.0.0/16
+
+volumes:
+  caddy-logs:
