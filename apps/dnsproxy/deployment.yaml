@@ -23,7 +23,7 @@ spec:
           image: adguard/dnsproxy:v0.83.0
           args:
             - --listen=0.0.0.0
-            - --listen=::
+            - "--listen=::"
             - --port=53
             - --upstream=tls://dns.${DOMAIN}:853
             - --fallback=tls://dns.adguard-dns.com
