@@ -5,7 +5,8 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-    - ${METALLB_RANGE}
+    - ${METALLB_RANGE_V4}
+    - ${METALLB_RANGE_V6}
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement

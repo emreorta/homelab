@@ -55,13 +55,14 @@ cat ~/.config/sops/age/keys.txt | kubectl create secret generic sops-age \
 # Create cluster settings (not committed to git)
 kubectl create configmap cluster-settings -n flux-system \
   --from-literal=ACME_EMAIL=<email>
-  --from-literal=DNSPROXY_LB_IP=<ip> \
+  --from-literal=DNSPROXY_LB_IP_V4=<ipv4> \
+  --from-literal=DNSPROXY_LB_IP_V6=<ipv6> \
   --from-literal=DOMAIN=<domain> \
-  --from-literal=FRP_SERVER_ADDR=<email> \
-  --from-literal=FRP_GROUP_KEY=<email> \
-  --from-literal=IMMICH_LB_IP=<ip> \
+  --from-literal=FRP_SERVER_ADDR=<host> \
+  --from-literal=FRP_GROUP_KEY=<key> \
   --from-literal=LDAP_BASE_DN=<dc=example,dc=com> \
-  --from-literal=METALLB_RANGE=<ip-start>-<ip-end>
+  --from-literal=METALLB_RANGE_V4=<ipv4-start>-<ipv4-end> \
+  --from-literal=METALLB_RANGE_V6=<ipv6-start>-<ipv6-end>
 ```
 
 Flux reconciles everything automatically after this.
