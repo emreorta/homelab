@@ -10,6 +10,9 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-path
+  claimRef:
+    name: lldap-pvc
+    namespace: lldap
   hostPath:
     path: "/data/lldap"
 ---

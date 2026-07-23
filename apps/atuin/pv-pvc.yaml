@@ -9,6 +9,9 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-path
+  claimRef:
+    name: atuin-postgres-pvc
+    namespace: atuin
   hostPath:
     path: "/data/atuin/postgres"
 ---

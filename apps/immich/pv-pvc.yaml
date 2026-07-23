@@ -10,6 +10,9 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-path
+  claimRef:
+    name: immich-library-pvc
+    namespace: immich
   hostPath:
     path: "/data/immich/library"
   nodeAffinity:
@@ -45,6 +48,9 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-path
+  claimRef:
+    name: immich-postgres-pvc
+    namespace: immich
   hostPath:
     path: "/data/immich/postgres"
   nodeAffinity:

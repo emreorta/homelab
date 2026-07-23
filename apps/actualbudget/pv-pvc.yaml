@@ -10,6 +10,9 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-path
+  claimRef:
+    name: actual-budget-pvc
+    namespace: actual-budget
   hostPath:
     path: "/data/actualbudget"
 ---

@@ -10,6 +10,9 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-path
+  claimRef:
+    name: linkding-pvc
+    namespace: linkding
   hostPath:
     path: "/data/linkding"
 ---

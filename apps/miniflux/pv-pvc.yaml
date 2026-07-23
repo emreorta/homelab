@@ -9,6 +9,9 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-path
+  claimRef:
+    name: miniflux-postgres-pvc
+    namespace: miniflux
   hostPath:
     path: /data/miniflux/postgres
 ---

@@ -10,6 +10,9 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-path
+  claimRef:
+    name: silverbullet-pvc
+    namespace: silverbullet
   hostPath:
     path: "/data/silverbullet"
 ---
