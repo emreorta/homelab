@@ -21,7 +21,7 @@ services:
       - proxy
 
   frps:
-    image: fatedier/frps:v0.70.0
+    image: fatedier/frps:v0.70.1
     container_name: frps
     restart: always
     command: ["-c", "/etc/frp/frps.toml"]
