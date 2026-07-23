@@ -9,7 +9,7 @@ data:
     server:
       address: 0.0.0.0:9091
     log:
-      level: "info"
+      level: "warn"
       format: "json"
     authentication_backend:
       password_reset:
