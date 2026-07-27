@@ -57,5 +57,5 @@ spec:
                   - key: app
                     operator: In
                     values:
-                      - frpc
+                      - dnsproxy
               topologyKey: "kubernetes.io/hostname"
