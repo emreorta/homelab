@@ -21,6 +21,7 @@ spec:
       containers:
         - name: dnsproxy
           image: adguard/dnsproxy:v0.83.0
+          imagePullPolicy: IfNotPresent
           args:
             - --listen=0.0.0.0
             - "--listen=::"

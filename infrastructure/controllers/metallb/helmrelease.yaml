@@ -17,6 +17,8 @@ spec:
     createNamespace: true
   values:
     controller:
+      image:
+        pullPolicy: IfNotPresent
       strategy:
         type: RollingUpdate
         rollingUpdate:
@@ -29,6 +31,8 @@ spec:
         limits:
           memory: "128Mi"
     speaker:
+      image:
+        pullPolicy: IfNotPresent
       strategy:
         type: RollingUpdate
         rollingUpdate:
@@ -40,3 +44,10 @@ spec:
           memory: "128Mi"
         limits:
           memory: "256Mi"
+    frr-k8s:
+      frrk8s:
+        image:
+          pullPolicy: IfNotPresent
+        frr:
+          image:
+            pullPolicy: IfNotPresent

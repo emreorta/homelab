@@ -28,6 +28,7 @@ spec:
     image:
       repository: traefik
       tag: v3.7.9
+      pullPolicy: IfNotPresent
     additionalArguments:
       - '--serversTransport.insecureSkipVerify=true'
     service:

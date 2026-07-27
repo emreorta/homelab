@@ -27,6 +27,7 @@ spec:
       containers:
         - name: dozzle
           image: amir20/dozzle:v10.6.13
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           env:
