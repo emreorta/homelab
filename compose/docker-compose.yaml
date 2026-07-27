@@ -7,7 +7,6 @@ services:
       - "80:80"
       - "443:443"
       - "443:443/udp"
-      - "8443:8443/udp"
     environment:
       - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
       - ACME_EMAIL=${ACME_EMAIL}
