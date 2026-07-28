@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vaultwarden-db-backup
+  namespace: vaultwarden
+spec:
+  schedule: "0 2 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  startingDeadlineSeconds: 600
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: OnFailure
+          nodeSelector:
+            kubernetes.io/hostname: k3s-2
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+          containers:
+            - name: backup
+              image: alpine:3.24.1
+              imagePullPolicy: IfNotPresent
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                seccompProfile:
+                  type: RuntimeDefault
+              command:
+                - sh
+                - -euc
+                - |
+                  apk add --no-cache sqlite
+                  mkdir -p /data/backups
+                  sqlite3 /data/db.sqlite3 ".backup '/data/backups/db.sqlite3.tmp'"
+                  sqlite3 /data/backups/db.sqlite3.tmp 'PRAGMA integrity_check;' \
+                    | grep -qx ok
+                  mv /data/backups/db.sqlite3.tmp /data/backups/db.sqlite3
+                  echo "backup ok: $(stat -c %s /data/backups/db.sqlite3) bytes"
+              resources:
+                requests:
+                  cpu: "50m"
+                  memory: "64Mi"
+                limits:
+                  memory: "256Mi"
+              volumeMounts:
+                - name: vaultwarden-data
+                  mountPath: /data
+          volumes:
+            - name: vaultwarden-data
+              persistentVolumeClaim:
+                claimName: vaultwarden-pvc
