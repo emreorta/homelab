@@ -17,7 +17,6 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
         fsGroup: 1000
-        fsGroupChangePolicy: OnRootMismatch
       nodeSelector:
         kubernetes.io/hostname: k3s-3
       containers:
