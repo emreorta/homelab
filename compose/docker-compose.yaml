@@ -53,7 +53,7 @@ services:
         ipv4_address: 172.20.0.53
 
   uptime-kuma:
-    image: louislam/uptime-kuma:2.4.0
+    image: louislam/uptime-kuma:2.5.0
     container_name: uptime-kuma
     restart: always
     volumes:
