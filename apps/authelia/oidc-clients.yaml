@@ -44,3 +44,14 @@ data:
             authorization_policy: "two_factor"
             redirect_uris:
               - "https://rss.${DOMAIN}/oauth2/oidc/callback"
+
+          - client_id: "paperless"
+            client_name: "Paperless"
+            client_secret: "$pbkdf2-sha512$310000$56VleoEQzbhfpZcXzKxosA$DDF48hZAh913HMifhAOGlr4jq/nalWJtfZZoi/PWkKw7jVXQtng4SGy5Fkmy2pvbTqV5uVH5HImIRqEN7wKg0Q"
+            token_endpoint_auth_method: "client_secret_basic"
+            public: false
+            authorization_policy: "two_factor"
+            require_pkce: true
+            pkce_challenge_method: "S256"
+            redirect_uris:
+              - "https://paperless.${DOMAIN}/accounts/oidc/authelia/login/callback/"
