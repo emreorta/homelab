@@ -53,7 +53,7 @@ spec:
             - name: SMTP_PORT
               value: "465"
             - name: SMTP_FROM
-              value: "vault@${DOMAIN}"
+              value: "vaultwarden@${DOMAIN}"
             - name: SMTP_FROM_NAME
               value: "Vaultwarden"
             - name: SMTP_USERNAME
