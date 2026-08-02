@@ -1,0 +1,30 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: paperless
+  namespace: traefik
+spec:
+  entryPoints:
+    - frp
+  routes:
+    - match: Host(`paperless.${DOMAIN}`) && PathPrefix(`/admin`)
+      kind: Rule
+      priority: 100
+      middlewares:
+        - name: frp-headers
+          namespace: traefik
+        - name: authelia-auth
+          namespace: traefik
+      services:
+        - name: paperless
+          port: 8000
+          namespace: paperless
+    - match: Host(`paperless.${DOMAIN}`)
+      kind: Rule
+      middlewares:
+        - name: frp-headers
+          namespace: traefik
+      services:
+        - name: paperless
+          port: 8000
+          namespace: paperless

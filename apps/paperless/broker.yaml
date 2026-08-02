@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paperless-broker
+  namespace: paperless
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: paperless-broker
+  template:
+    metadata:
+      labels:
+        app: paperless-broker
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-2
+      containers:
+        - name: valkey
+          image: valkey/valkey:9.1.1-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6379
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              memory: "256Mi"
+          livenessProbe:
+            exec:
+              command:
+                - valkey-cli
+                - ping
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            exec:
+              command:
+                - valkey-cli
+                - ping
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: broker-data
+              mountPath: /data
+      volumes:
+        - name: broker-data
+          persistentVolumeClaim:
+            claimName: paperless-broker-pvc
