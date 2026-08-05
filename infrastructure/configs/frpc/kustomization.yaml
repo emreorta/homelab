@@ -5,3 +5,10 @@ resources:
   - deployment.yaml
   - config.yaml
   - secrets.yaml
+  - firewall-sync.yaml
+
+configMapGenerator:
+  - name: firewall-sync-script
+    namespace: frpc
+    files:
+      - scripts/sync.py
