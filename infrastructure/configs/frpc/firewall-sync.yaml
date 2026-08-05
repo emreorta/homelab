@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: firewall-sync
+  namespace: frpc
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: firewall-sync
+  template:
+    metadata:
+      labels:
+        app: firewall-sync
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+        - name: firewall-sync
+          image: python:3.14-alpine
+          imagePullPolicy: IfNotPresent
+          command: ["python", "/app/sync.py"]
+          env:
+            - name: HCLOUD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: frpc-secrets
+                  key: HCLOUD_TOKEN
+            - name: ORIGIN_IP
+              valueFrom:
+                secretKeyRef:
+                  name: frpc-secrets
+                  key: FRP_SERVER_ADDR
+            - name: IP_HOST
+              value: "ip.${DOMAIN}"
+            - name: FIREWALL_NAME
+              value: "homelab"
+            - name: RULE_DESCRIPTION
+              value: "frps"
+            - name: INTERVAL_SECONDS
+              value: "30"
+            - name: VERIFY_INTERVAL_SECONDS
+              value: "3600"
+          volumeMounts:
+            - name: script
+              mountPath: /app
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "48Mi"
+            limits:
+              memory: "128Mi"
+      volumes:
+        - name: script
+          configMap:
+            name: firewall-sync-script
