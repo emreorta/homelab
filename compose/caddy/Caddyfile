@@ -28,6 +28,11 @@ status.{env.DOMAIN} {
     reverse_proxy uptime-kuma:3001
 }
 
+ip.{env.DOMAIN} {
+    import common
+    respond "{remote_host}"
+}
+
 *.{env.DOMAIN} {
     import common
     reverse_proxy frps:8080 {
