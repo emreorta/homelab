@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mindwtr
+  namespace: mindwtr
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: mindwtr
+  template:
+    metadata:
+      labels:
+        app: mindwtr
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-3
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: mindwtr
+          image: ghcr.io/dongdongbh/mindwtr-cloud:1.1.6
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8787
+          env:
+            - name: MINDWTR_CLOUD_AUTH_TOKENS
+              valueFrom:
+                secretKeyRef:
+                  name: mindwtr-auth
+                  key: token
+            - name: MINDWTR_CLOUD_CORS_ORIGIN
+              value: "https://tasks.${DOMAIN}"
+            - name: MINDWTR_CLOUD_MAX_BODY_BYTES
+              value: "10000000"
+            - name: MINDWTR_CLOUD_MAX_ATTACHMENT_BYTES
+              value: "50000000"
+          resources:
+            requests:
+              cpu: "150m"
+              memory: "128Mi"
+            limits:
+              memory: "512Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8787
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8787
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          volumeMounts:
+            - name: mindwtr-data
+              mountPath: /app/cloud_data
+      volumes:
+        - name: mindwtr-data
+          persistentVolumeClaim:
+            claimName: mindwtr-pvc
