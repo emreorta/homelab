@@ -29,6 +29,17 @@ identity_providers:
         redirect_uris:
           - "https://links.${DOMAIN}/oidc/callback/"
 
+      - client_id: "mealie"
+        client_name: "Mealie"
+        client_secret: "$pbkdf2-sha512$310000$Xuv5.nKmtdNjTz.DWLyTcQ$TfocVkw0MDXw/bs70dyv5UaJn49.Kr.8.vlag81xGlck7WOoEYRzXbLPlgpks7hdsLu1PyhQgIbftjMbNIh18A"
+        token_endpoint_auth_method: "client_secret_basic"
+        public: false
+        authorization_policy: "two_factor"
+        require_pkce: true
+        pkce_challenge_method: "S256"
+        redirect_uris:
+          - "https://recipes.${DOMAIN}/login"
+
       - client_id: "miniflux"
         client_name: "Miniflux"
         client_secret: "$pbkdf2-sha512$310000$ofz4g1ejnEkw6LG4PzBm4w$CjFrCG4Hl9O6zjPC9PY1FiNk7AYzuIhoLcEHUC5B8G9O7xB4VzoNKwxMYViEqz4hWyg8qiDHIqQbAcjGIDXJFQ"
