@@ -32,6 +32,7 @@ IP_HOST = required("IP_HOST")
 FIREWALL = os.environ.get("FIREWALL_NAME", "homelab")
 RULE = os.environ.get("RULE_DESCRIPTION", "frps")
 INTERVAL = int(os.environ.get("INTERVAL_SECONDS", "30"))
+VERIFY_INTERVAL = int(os.environ.get("VERIFY_INTERVAL_SECONDS", "3600"))
 
 
 def log(message: str) -> None:
@@ -48,6 +49,7 @@ def api(path: str, payload: dict | None = None) -> dict:
         },
         method="POST" if payload is not None else "GET",
     )
+
     with urllib.request.urlopen(request, timeout=15) as response:
         return json.load(response)
 
@@ -61,6 +63,7 @@ def observed_address() -> ipaddress.IPv4Address | None:
         socket.create_connection((ORIGIN, 443), timeout=10),
         server_hostname=IP_HOST,
     )
+
     try:
         connection.request("GET", "/", headers={"Host": IP_HOST})
         response = connection.getresponse()
@@ -76,21 +79,28 @@ def observed_address() -> ipaddress.IPv4Address | None:
     except ValueError:
         log(f"echo endpoint returned something that is not an IPv4 address: {body!r}")
         return None
+
     if not address.is_global:
         log(f"echo endpoint returned a non-routable address: {address}")
         return None
+
     return address
 
 
-def sync() -> ipaddress.IPv4Address | None:
+def sync(known: ipaddress.IPv4Address | None) -> ipaddress.IPv4Address | None:
     address = observed_address()
+
     if address is None:
         return None
+
+    if address == known:
+        return address
 
     firewalls = api(f"/firewalls?name={FIREWALL}").get("firewalls", [])
     if len(firewalls) != 1:
         log(f"expected exactly one firewall named {FIREWALL!r}, found {len(firewalls)}")
         return None
+
     firewall = firewalls[0]
 
     targets = [rule for rule in firewall["rules"] if rule.get("description") == RULE]
@@ -108,6 +118,7 @@ def sync() -> ipaddress.IPv4Address | None:
     ]
     api(f"/firewalls/{firewall['id']}/actions/set_rules", {"rules": rules})
     log(f"rule {RULE!r} updated: {targets[0]['source_ips']} -> {desired}")
+
     return address
 
 
@@ -116,17 +127,29 @@ def main() -> None:
         f"polling {IP_HOST} every {INTERVAL}s to keep rule {RULE!r} on {FIREWALL!r} current"
     )
     announced = None
+    synced = None
+    checked = float("-inf")
+
     while True:
+        stale = time.monotonic() - checked >= VERIFY_INTERVAL
+
         try:
-            address = sync()
+            address = sync(None if stale else synced)
         except Exception as error:
             log(
                 f"sync failed, retrying in {INTERVAL}s: {type(error).__name__}: {error}"
             )
         else:
-            if address is not None and address != announced:
-                log(f"WAN address is {address}")
-                announced = address
+            if address is not None:
+                if stale or address != synced:
+                    checked = time.monotonic()
+
+                synced = address
+
+                if address != announced:
+                    log(f"WAN address is {address}")
+                    announced = address
+
         time.sleep(INTERVAL)
 
 

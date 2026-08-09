@@ -46,6 +46,8 @@ spec:
               value: "frps"
             - name: INTERVAL_SECONDS
               value: "30"
+            - name: VERIFY_INTERVAL_SECONDS
+              value: "3600"
           volumeMounts:
             - name: script
               mountPath: /app
