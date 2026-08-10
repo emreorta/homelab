@@ -43,6 +43,9 @@ access_control:
       policy: two_factor
 session:
   name: authelia_session
+  redis:
+    host: authelia-valkey
+    port: 6379
   cookies:
     - name: authelia_session
       domain: ${DOMAIN}
