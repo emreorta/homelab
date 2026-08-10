@@ -1,6 +1,10 @@
 theme: "dark"
 server:
   address: 0.0.0.0:9091
+  timeouts:
+    # authelia closes idle connections before traefik and logs 408.
+    # anything higher than traefik's default value of 90s stops it.
+    idle: 120s
 log:
   level: "warn"
   format: "json"
