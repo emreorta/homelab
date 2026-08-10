@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - deployment.yaml
+  - service.yaml
+  - secrets.yaml
+  - ingress.yaml
+
+configMapGenerator:
+  - name: searxng-settings
+    namespace: searxng
+    files:
+      - settings.yml=settings.yaml
