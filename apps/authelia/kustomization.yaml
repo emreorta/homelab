@@ -7,6 +7,9 @@ resources:
   - pv-pvc.yaml
   - secrets.yaml
   - ingress.yaml
+  - valkey-deployment.yaml
+  - valkey-service.yaml
+  - valkey-pv-pvc.yaml
 
 configMapGenerator:
   - name: authelia-config
