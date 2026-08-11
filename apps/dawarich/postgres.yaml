@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dawarich-postgres
+  namespace: dawarich
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: dawarich-postgres
+  template:
+    metadata:
+      labels:
+        app: dawarich-postgres
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-2
+      containers:
+        - name: postgres
+          image: postgis/postgis:18-3.6-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: dawarich
+            - name: POSTGRES_DB
+              value: dawarich
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dawarich-db
+                  key: POSTGRES_PASSWORD
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              memory: "1Gi"
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - dawarich
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - dawarich
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql
+            - name: dshm
+              mountPath: /dev/shm
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: dawarich-postgres-pvc
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 1Gi
