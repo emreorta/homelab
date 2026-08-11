@@ -5,6 +5,7 @@ resources:
   - atuin
   - authelia
   - bentopdf
+  - dawarich
   - dnsproxy
   - dozzle
   - immich

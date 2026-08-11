@@ -1,0 +1,252 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dawarich
+  namespace: dawarich
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: dawarich
+  template:
+    metadata:
+      labels:
+        app: dawarich
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      nodeSelector:
+        kubernetes.io/hostname: k3s-2
+      initContainers:
+        - name: wait-for-db
+          image: postgres:18.4
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - until pg_isready -h dawarich-postgres -U dawarich; do sleep 2; done
+        - name: wait-for-broker
+          image: valkey/valkey:9.1.1-alpine
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - until valkey-cli -h dawarich-broker ping; do sleep 2; done
+      containers:
+        - name: dawarich
+          image: freikin/dawarich:1.12.0
+          imagePullPolicy: IfNotPresent
+          command: ["web-entrypoint.sh"]
+          args: ["bin/rails", "server", "-p", "3000", "-b", "::"]
+          ports:
+            - containerPort: 3000
+          env:
+            - name: RAILS_ENV
+              value: production
+            - name: SELF_HOSTED
+              value: "true"
+            - name: APPLICATION_HOSTS
+              value: timeline.${DOMAIN},localhost,127.0.0.1
+            - name: APPLICATION_PROTOCOL
+              value: https
+            - name: DOMAIN
+              value: timeline.${DOMAIN}
+            - name: TIME_ZONE
+              value: Europe/Berlin
+            - name: DATABASE_HOST
+              value: dawarich-postgres
+            - name: DATABASE_PORT
+              value: "5432"
+            - name: DATABASE_USERNAME
+              value: dawarich
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dawarich-db
+                  key: POSTGRES_PASSWORD
+            - name: DATABASE_NAME
+              value: dawarich
+            - name: REDIS_URL
+              value: redis://dawarich-broker:6379
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: dawarich-app
+                  key: SECRET_KEY_BASE
+            - name: STORE_GEODATA
+              value: "true"
+            - name: PHOTON_API_HOST
+              value: app.chibigeo.com/v1/photon
+            - name: PHOTON_API_USE_HTTPS
+              value: "true"
+            - name: PHOTON_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: dawarich-app
+                  key: PHOTON_API_KEY
+            - name: OIDC_CLIENT_ID
+              value: dawarich
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: dawarich-app
+                  key: OIDC_CLIENT_SECRET
+            - name: OIDC_ISSUER
+              value: https://auth.${DOMAIN}
+            - name: OIDC_REDIRECT_URI
+              value: https://timeline.${DOMAIN}/users/auth/openid_connect/callback
+            - name: OIDC_PROVIDER_NAME
+              value: Authelia
+            - name: OIDC_PKCE_ENABLED
+              value: "true"
+            - name: ALLOW_EMAIL_PASSWORD_LOGIN
+              value: "false"
+            - name: ALLOW_EMAIL_PASSWORD_REGISTRATION
+              value: "false"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              memory: "2Gi"
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - wget -qO - http://127.0.0.1:3000/api/v1/health | grep -q ok
+            periodSeconds: 10
+            failureThreshold: 60
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - wget -qO - http://127.0.0.1:3000/api/v1/health | grep -q ok
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - wget -qO - http://127.0.0.1:3000/api/v1/health | grep -q ok
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 5
+          volumeMounts:
+            - name: public
+              mountPath: /var/app/public
+            - name: watched
+              mountPath: /var/app/tmp/imports/watched
+            - name: storage
+              mountPath: /var/app/storage
+        - name: sidekiq
+          image: freikin/dawarich:1.12.0
+          imagePullPolicy: IfNotPresent
+          command: ["sidekiq-entrypoint.sh"]
+          args: ["sidekiq"]
+          env:
+            - name: RAILS_ENV
+              value: production
+            - name: SELF_HOSTED
+              value: "true"
+            - name: APPLICATION_HOSTS
+              value: timeline.${DOMAIN},localhost,127.0.0.1
+            - name: APPLICATION_PROTOCOL
+              value: https
+            - name: DOMAIN
+              value: timeline.${DOMAIN}
+            - name: TIME_ZONE
+              value: Europe/Berlin
+            - name: DATABASE_HOST
+              value: dawarich-postgres
+            - name: DATABASE_PORT
+              value: "5432"
+            - name: DATABASE_USERNAME
+              value: dawarich
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: dawarich-db
+                  key: POSTGRES_PASSWORD
+            - name: DATABASE_NAME
+              value: dawarich
+            - name: REDIS_URL
+              value: redis://dawarich-broker:6379
+            - name: BACKGROUND_PROCESSING_CONCURRENCY
+              value: "10"
+            - name: STORE_GEODATA
+              value: "true"
+            - name: PHOTON_API_HOST
+              value: app.chibigeo.com/v1/photon
+            - name: PHOTON_API_USE_HTTPS
+              value: "true"
+            - name: PHOTON_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: dawarich-app
+                  key: PHOTON_API_KEY
+            - name: OIDC_CLIENT_ID
+              value: dawarich
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: dawarich-app
+                  key: OIDC_CLIENT_SECRET
+            - name: OIDC_ISSUER
+              value: https://auth.${DOMAIN}
+            - name: OIDC_REDIRECT_URI
+              value: https://timeline.${DOMAIN}/users/auth/openid_connect/callback
+            - name: OIDC_PROVIDER_NAME
+              value: Authelia
+            - name: OIDC_PKCE_ENABLED
+              value: "true"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              memory: "1536Mi"
+          readinessProbe:
+            exec:
+              command:
+                - pgrep
+                - -f
+                - sidekiq
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            exec:
+              command:
+                - pgrep
+                - -f
+                - sidekiq
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 5
+          volumeMounts:
+            - name: public
+              mountPath: /var/app/public
+            - name: watched
+              mountPath: /var/app/tmp/imports/watched
+            - name: storage
+              mountPath: /var/app/storage
+      volumes:
+        - name: public
+          persistentVolumeClaim:
+            claimName: dawarich-public-pvc
+        - name: watched
+          persistentVolumeClaim:
+            claimName: dawarich-watched-pvc
+        - name: storage
+          persistentVolumeClaim:
+            claimName: dawarich-storage-pvc

@@ -9,6 +9,17 @@ identity_providers:
         redirect_uris:
           - "https://budget.${DOMAIN}/openid/callback"
 
+      - client_id: "dawarich"
+        client_name: "Dawarich"
+        client_secret: "$pbkdf2-sha512$310000$K0S7MzsaZE25uvydzB/wJg$UvwwrhACl5RR0UZLNH3VOkSYkHPGDaJErYdbANXVPc0NPlLjACHA3w1kkGZg7.RPgOR0ZO7ccsI68Yjjy7IFKQ"
+        token_endpoint_auth_method: "client_secret_basic"
+        public: false
+        authorization_policy: "two_factor"
+        require_pkce: true
+        pkce_challenge_method: "S256"
+        redirect_uris:
+          - "https://timeline.${DOMAIN}/users/auth/openid_connect/callback"
+
       - client_id: "immich"
         client_name: "Immich"
         client_secret: "$pbkdf2-sha512$310000$RqDz.eN7yYrczkPPVa/1YA$pYtP08d4gn.p0RaPZdoM6d8EDg.a.3LUOWReTAEwpkSlhc9UrIrMX7/JmDcYf1qQ0GGrwwuujjep.FcvDdYaYA"
