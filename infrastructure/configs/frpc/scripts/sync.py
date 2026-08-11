@@ -14,6 +14,7 @@ import os
 import socket
 import ssl
 import time
+import urllib.error
 import urllib.request
 
 API = "https://api.hetzner.cloud/v1"
@@ -33,6 +34,7 @@ FIREWALL = os.environ.get("FIREWALL_NAME", "homelab")
 RULE = os.environ.get("RULE_DESCRIPTION", "frps")
 INTERVAL = int(os.environ.get("INTERVAL_SECONDS", "30"))
 VERIFY_INTERVAL = int(os.environ.get("VERIFY_INTERVAL_SECONDS", "3600"))
+SSL_CONTEXT = ssl.create_default_context()
 
 
 def log(message: str) -> None:
@@ -50,22 +52,29 @@ def api(path: str, payload: dict | None = None) -> dict:
         method="POST" if payload is not None else "GET",
     )
 
-    with urllib.request.urlopen(request, timeout=15) as response:
-        return json.load(response)
+    try:
+        with urllib.request.urlopen(request, timeout=15) as response:
+            return json.load(response)
+    except urllib.error.HTTPError as error:
+        detail = json.loads(error.read()).get("error", {}).get("message", "")
+        raise RuntimeError(f"{error} {detail}") from error
 
 
 def observed_address() -> ipaddress.IPv4Address | None:
     """Ask the VPS which source address it sees this connection coming from."""
-    context = ssl.create_default_context()
-    connection = http.client.HTTPSConnection(IP_HOST, 443, timeout=10)
+    connection = http.client.HTTPSConnection(IP_HOST, timeout=10)
 
-    connection.sock = context.wrap_socket(
-        socket.create_connection((ORIGIN, 443), timeout=10),
-        server_hostname=IP_HOST,
-    )
+    # dial ORIGIN directly. if i let IP_HOST resolve, local dns can reroute
+    # it and i won't see the address the firewall actually sees
+    raw = socket.create_connection((ORIGIN, 443), timeout=10)
+    try:
+        connection.sock = SSL_CONTEXT.wrap_socket(raw, server_hostname=IP_HOST)
+    except Exception:
+        raw.close()
+        raise
 
     try:
-        connection.request("GET", "/", headers={"Host": IP_HOST})
+        connection.request("GET", "/")
         response = connection.getresponse()
         if response.status != 200:
             log(f"echo endpoint returned HTTP {response.status}")
@@ -87,13 +96,20 @@ def observed_address() -> ipaddress.IPv4Address | None:
     return address
 
 
-def sync(known: ipaddress.IPv4Address | None) -> ipaddress.IPv4Address | None:
+def sync(
+    known: ipaddress.IPv4Address | None, verify: bool = False
+) -> ipaddress.IPv4Address | None:
+    """Point the rule at the observed address.
+
+    With `verify=True`, check the firewall even when the address has not changed
+    in case the rule was edited outside this script.
+    """
     address = observed_address()
 
     if address is None:
         return None
 
-    if address == known:
+    if not verify and address == known:
         return address
 
     firewalls = api(f"/firewalls?name={FIREWALL}").get("firewalls", [])
@@ -126,29 +142,25 @@ def main() -> None:
     log(
         f"polling {IP_HOST} every {INTERVAL}s to keep rule {RULE!r} on {FIREWALL!r} current"
     )
-    announced = None
-    synced = None
+    synced: ipaddress.IPv4Address | None = None
     checked = float("-inf")
 
     while True:
         stale = time.monotonic() - checked >= VERIFY_INTERVAL
 
         try:
-            address = sync(None if stale else synced)
+            address = sync(synced, verify=stale)
         except Exception as error:
             log(
                 f"sync failed, retrying in {INTERVAL}s: {type(error).__name__}: {error}"
             )
         else:
             if address is not None:
+                if address != synced:
+                    log(f"WAN address is {address}")
                 if stale or address != synced:
                     checked = time.monotonic()
-
                 synced = address
-
-                if address != announced:
-                    log(f"WAN address is {address}")
-                    announced = address
 
         time.sleep(INTERVAL)
 
