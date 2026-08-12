@@ -225,7 +225,7 @@ spec:
                   name: dawarich-app
                   key: OTP_ENCRYPTION_KEY_DERIVATION_SALT
             - name: BACKGROUND_PROCESSING_CONCURRENCY
-              value: "10"
+              value: "1"
             - name: STORE_GEODATA
               value: "true"
             - name: PHOTON_API_HOST
