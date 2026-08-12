@@ -42,7 +42,7 @@ spec:
             - until valkey-cli -h dawarich-broker ping; do sleep 2; done
       containers:
         - name: dawarich
-          image: freikin/dawarich:1.12.0
+          image: freikin/dawarich:1.12.1
           imagePullPolicy: IfNotPresent
           command: ["web-entrypoint.sh"]
           args: ["bin/rails", "server", "-p", "3000", "-b", "::"]
@@ -168,7 +168,7 @@ spec:
             - name: storage
               mountPath: /var/app/storage
         - name: sidekiq
-          image: freikin/dawarich:1.12.0
+          image: freikin/dawarich:1.12.1
           imagePullPolicy: IfNotPresent
           command: ["sidekiq-entrypoint.sh"]
           args: ["sidekiq"]
