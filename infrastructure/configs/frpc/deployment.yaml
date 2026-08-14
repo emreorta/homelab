@@ -48,7 +48,7 @@ spec:
               mountPath: /etc/frp
       containers:
         - name: frpc
-          image: fatedier/frpc:v0.70.1
+          image: fatedier/frpc:v0.71.0
           imagePullPolicy: IfNotPresent
           args: ["-c", "/etc/frp/frpc.toml"]
           volumeMounts:
