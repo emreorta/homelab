@@ -27,7 +27,7 @@ spec:
         kubernetes.io/hostname: k3s-2
       initContainers:
         - name: wait-for-db
-          image: postgres:18.4
+          image: postgres:18.6
           imagePullPolicy: IfNotPresent
           command:
             - sh
