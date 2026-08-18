@@ -41,8 +41,6 @@ services:
     container_name: adguard
     restart: always
     ports:
-      - "53:53/tcp"
-      - "53:53/udp"
       - "853:853/tcp"
     volumes:
       - ./adguard/data/work:/opt/adguardhome/work
