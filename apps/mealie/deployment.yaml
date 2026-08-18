@@ -27,7 +27,7 @@ spec:
         kubernetes.io/hostname: k3s-controlplane
       containers:
         - name: mealie
-          image: ghcr.io/mealie-recipes/mealie:v3.22.0
+          image: ghcr.io/mealie-recipes/mealie:v3.23.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9000
