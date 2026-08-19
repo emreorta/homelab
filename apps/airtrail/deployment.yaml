@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airtrail
+  namespace: airtrail
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: airtrail
+  template:
+    metadata:
+      labels:
+        app: airtrail
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      nodeSelector:
+        kubernetes.io/hostname: k3s-2
+      initContainers:
+        - name: wait-for-db
+          image: postgres:18.6
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - until pg_isready -h airtrail-postgres -U airtrail; do sleep 2; done
+      containers:
+        - name: airtrail
+          image: johly/airtrail:v3.12.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          env:
+            - name: ORIGIN
+              value: https://flights.${DOMAIN}
+            - name: DB_URL
+              valueFrom:
+                secretKeyRef:
+                  name: airtrail-db
+                  key: DB_URL
+            - name: OAUTH_ENABLED
+              value: "true"
+            - name: OAUTH_ISSUER_URL
+              value: https://auth.${DOMAIN}
+            - name: OAUTH_CLIENT_ID
+              value: airtrail
+            - name: OAUTH_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: airtrail-app
+                  key: OAUTH_CLIENT_SECRET
+            - name: UPLOAD_LOCATION
+              value: /app/uploads
+            - name: BODY_SIZE_LIMIT
+              value: 20M
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              memory: "512Mi"
+          startupProbe:
+            httpGet:
+              path: /api/ping
+              port: 3000
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /api/ping
+              port: 3000
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/ping
+              port: 3000
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 5
+          volumeMounts:
+            - name: uploads
+              mountPath: /app/uploads
+      volumes:
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: airtrail-uploads-pvc

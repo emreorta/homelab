@@ -9,6 +9,17 @@ identity_providers:
         redirect_uris:
           - "https://budget.${DOMAIN}/openid/callback"
 
+      - client_id: "airtrail"
+        client_name: "AirTrail"
+        client_secret: "$pbkdf2-sha512$310000$ZIrevL9P9kD3sUqVCjySbA$zOr2zF8MBF.DR18CzqBVYY9p.AZmyN54.ex4D2RJcwhEx2.zrND.ohMvtNhDykbwMxwlEAXQCUes8DX24hKdVg"
+        token_endpoint_auth_method: "client_secret_post"
+        public: false
+        authorization_policy: "two_factor"
+        require_pkce: true
+        pkce_challenge_method: "S256"
+        redirect_uris:
+          - "https://flights.${DOMAIN}/login"
+
       - client_id: "dawarich"
         client_name: "Dawarich"
         client_secret: "$pbkdf2-sha512$310000$K0S7MzsaZE25uvydzB/wJg$UvwwrhACl5RR0UZLNH3VOkSYkHPGDaJErYdbANXVPc0NPlLjACHA3w1kkGZg7.RPgOR0ZO7ccsI68Yjjy7IFKQ"
