@@ -53,6 +53,14 @@ spec:
                 - miniflux
             initialDelaySeconds: 30
             periodSeconds: 10
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -U
+                - miniflux
+            initialDelaySeconds: 5
+            periodSeconds: 10
           volumeMounts:
             - name: postgres-data
               mountPath: /var/lib/postgresql

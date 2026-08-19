@@ -79,15 +79,21 @@ spec:
               memory: "128Mi"
             limits:
               memory: "256Mi"
-          livenessProbe:
+          startupProbe:
             httpGet:
               path: /healthcheck
               port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 20
+            periodSeconds: 10
+            failureThreshold: 30
           readinessProbe:
             httpGet:
               path: /healthcheck
               port: 8080
-            initialDelaySeconds: 15
             periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 8080
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 5
