@@ -22,7 +22,7 @@ spec:
         kubernetes.io/hostname: k3s-2
       containers:
         - name: linkding
-          image: sissbruecker/linkding:1.46.1-alpine
+          image: sissbruecker/linkding:1.46.2-alpine
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9090
