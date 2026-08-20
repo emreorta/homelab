@@ -1,8 +1,0 @@
-use_default_settings: true
-server:
-  base_url: "https://search.${DOMAIN}/"
-  method: "GET"
-  image_proxy: true
-search:
-  autocomplete: "duckduckgo"
-  default_lang: "auto"

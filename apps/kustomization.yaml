@@ -18,6 +18,5 @@ resources:
   - miniflux
   - ntfy
   - paperless
-  - searxng
   - silverbullet
   - vaultwarden
