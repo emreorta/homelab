@@ -23,7 +23,7 @@ spec:
         runAsUser: 101
       containers:
         - name: bentopdf
-          image: ghcr.io/alam00000/bentopdf-simple:2.8.7
+          image: ghcr.io/alam00000/bentopdf-simple:2.8.8
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
