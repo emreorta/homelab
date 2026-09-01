@@ -34,7 +34,7 @@ spec:
             - -c
             - until pg_isready -h dawarich-postgres -U dawarich; do sleep 2; done
         - name: wait-for-broker
-          image: valkey/valkey:9.1.1-alpine
+          image: valkey/valkey:9.1.2-alpine
           imagePullPolicy: IfNotPresent
           command:
             - sh
