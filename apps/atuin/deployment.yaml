@@ -78,7 +78,7 @@ spec:
         kubernetes.io/hostname: k3s-3
       containers:
         - name: atuin
-          image: ghcr.io/atuinsh/atuin:18.20.1
+          image: ghcr.io/atuinsh/atuin:18.21.0
           imagePullPolicy: IfNotPresent
           args: ["start"]
           ports:
