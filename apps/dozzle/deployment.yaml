@@ -26,7 +26,7 @@ spec:
         kubernetes.io/hostname: k3s-3
       containers:
         - name: dozzle
-          image: amir20/dozzle:v10.9.2
+          image: amir20/dozzle:v10.10.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
