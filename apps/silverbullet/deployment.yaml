@@ -26,7 +26,7 @@ spec:
         kubernetes.io/hostname: k3s-2
       containers:
         - name: silverbullet
-          image: ghcr.io/silverbulletmd/silverbullet:2.10.0
+          image: ghcr.io/silverbulletmd/silverbullet:2.11.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
