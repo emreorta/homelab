@@ -227,11 +227,6 @@ spec:
               value: photon.koalasec.org
             - name: PHOTON_API_USE_HTTPS
               value: "true"
-            - name: PHOTON_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: dawarich-app
-                  key: PHOTON_API_KEY
             - name: OIDC_CLIENT_ID
               value: dawarich
             - name: OIDC_CLIENT_SECRET
