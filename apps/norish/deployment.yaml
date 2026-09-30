@@ -34,7 +34,7 @@ spec:
             - -c
             - until pg_isready -h norish-postgres -U norish; do sleep 2; done
         - name: wait-for-redis
-          image: redis:8.10.1-alpine
+          image: redis:8.10.2-alpine
           imagePullPolicy: IfNotPresent
           command:
             - sh
