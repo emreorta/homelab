@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: norish-obscura
+  namespace: norish
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: norish-obscura
+  template:
+    metadata:
+      labels:
+        app: norish-obscura
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+      nodeSelector:
+        kubernetes.io/hostname: k3s-controlplane
+      containers:
+        - name: obscura
+          image: norishapp/obscura:0.2.2-norish.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9222
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              memory: "1Gi"
+          readinessProbe:
+            tcpSocket:
+              port: 9222
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 9222
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: norish-obscura
+  namespace: norish
+spec:
+  selector:
+    app: norish-obscura
+  ports:
+    - protocol: TCP
+      port: 9222
+      targetPort: 9222
+  type: ClusterIP
