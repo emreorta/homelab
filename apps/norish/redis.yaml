@@ -24,7 +24,7 @@ spec:
         kubernetes.io/hostname: k3s-controlplane
       containers:
         - name: redis
-          image: redis:8.10.1-alpine
+          image: redis:8.10.2-alpine
           imagePullPolicy: IfNotPresent
           args:
             - --appendonly
