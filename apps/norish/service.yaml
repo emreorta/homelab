@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: norish
+  namespace: norish
+spec:
+  selector:
+    app: norish
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: norish-postgres
+  namespace: norish
+spec:
+  selector:
+    app: norish-postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: norish-redis
+  namespace: norish
+spec:
+  selector:
+    app: norish-redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+  type: ClusterIP
