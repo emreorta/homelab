@@ -92,3 +92,14 @@ identity_providers:
         pkce_challenge_method: "S256"
         redirect_uris:
           - "https://paperless.${DOMAIN}/accounts/oidc/authelia/login/callback/"
+
+      - client_id: "silverbullet"
+        client_name: "SilverBullet"
+        client_secret: "$pbkdf2-sha512$310000$0AlpbCsazE3zke.ONZDISw$K/zmxBWJCCTYj4h/ElpvlN.7Nao2aGfbXTPmUMFAzKvFYRq7iICcOFwqMqz/psIZfgmSG1QJDkRwBxRbMdZAKQ"
+        token_endpoint_auth_method: "client_secret_basic"
+        public: false
+        authorization_policy: "two_factor"
+        require_pkce: true
+        pkce_challenge_method: "S256"
+        redirect_uris:
+          - "https://notes.${DOMAIN}/.auth/central/oidc/callback"

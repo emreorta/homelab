@@ -33,11 +33,6 @@ access_control:
   rules:
     - domain: "ntfy.${DOMAIN}"
       policy: bypass
-    - domain: "notes.${DOMAIN}"
-      resources:
-        - '^/\.client/.*'
-        - '^/service_worker\.js$'
-      policy: bypass
     - domain: "links.${DOMAIN}"
       resources:
         - '^/bookmarks/new\?' # used by the ios pwa
