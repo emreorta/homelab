@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - frp
   routes:
-    - match: Host(`norish.${DOMAIN}`)
+    - match: Host(`recipes.${DOMAIN}`)
       kind: Rule
       middlewares:
         - name: frp-headers
