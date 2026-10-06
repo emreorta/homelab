@@ -48,7 +48,7 @@ spec:
             - containerPort: 3000
           env:
             - name: AUTH_URL
-              value: https://norish.${DOMAIN}
+              value: https://recipes.${DOMAIN}
             - name: TZ
               value: Europe/Berlin
             - name: DATABASE_URL
