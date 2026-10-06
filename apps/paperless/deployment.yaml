@@ -112,7 +112,7 @@ spec:
           resources:
             requests:
               cpu: "250m"
-              memory: "1Gi"
+              memory: "1534Mi"
             limits:
               memory: "3Gi"
           startupProbe:
