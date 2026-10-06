@@ -13,7 +13,6 @@ resources:
   - it-tools
   - linkding
   - lldap
-  - mindwtr
   - miniflux
   - norish
   - ntfy
