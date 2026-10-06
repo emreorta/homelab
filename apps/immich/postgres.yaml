@@ -15,6 +15,8 @@ spec:
       labels:
         app: immich-postgres
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-controlplane
       containers:
         - name: postgres
           image: ghcr.io/tensorchord/vchord-postgres:pg18-v1.1.1

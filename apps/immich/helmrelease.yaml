@@ -48,6 +48,9 @@ spec:
 
     valkey:
       enabled: true
+      defaultPodOptions:
+        nodeSelector:
+          kubernetes.io/hostname: k3s-controlplane
       controllers:
         main:
           containers:
@@ -88,6 +91,9 @@ spec:
 
     machine-learning:
       enabled: true
+      defaultPodOptions:
+        nodeSelector:
+          kubernetes.io/hostname: k3s-controlplane
       controllers:
         main:
           containers:
