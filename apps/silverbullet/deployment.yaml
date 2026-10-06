@@ -33,13 +33,6 @@ spec:
           env:
             - name: SB_HOSTNAME
               value: "0.0.0.0"
-            - name: SB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: silverbullet-user
-                  key: sb-user
-            - name: SB_INDEX_PAGE
-              value: "Home"
           resources:
             requests:
               cpu: "100m"
@@ -48,7 +41,7 @@ spec:
               memory: "512Mi"
           volumeMounts:
             - name: silverbullet-data
-              mountPath: /space
+              mountPath: /data
       volumes:
         - name: silverbullet-data
           persistentVolumeClaim:
