@@ -98,6 +98,8 @@ spec:
         main:
           containers:
             main:
+              env:
+                MACHINE_LEARNING_MODEL_REVISION: "v2"
               resources:
                 requests:
                   cpu: "250m"
