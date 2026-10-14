@@ -24,7 +24,7 @@ spec:
         kubernetes.io/hostname: k3s-controlplane
       containers:
         - name: obscura
-          image: norishapp/obscura:0.2.2-norish.1
+          image: norishapp/obscura:0.2.4-norish.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9222
