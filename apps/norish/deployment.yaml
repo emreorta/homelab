@@ -65,6 +65,11 @@ spec:
               value: redis://norish-redis:6379
             - name: OBSCURA_ENDPOINT
               value: ws://norish-obscura:9222
+            - name: OBSCURA_CDP_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: norish-obscura
+                  key: OBSCURA_CDP_TOKEN
             - name: UPLOADS_DIR
               value: /app/uploads
             - name: PASSWORD_AUTH_ENABLED
