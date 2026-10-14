@@ -28,6 +28,12 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9222
+          env:
+            - name: OBSCURA_CDP_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: norish-obscura
+                  key: OBSCURA_CDP_TOKEN
           resources:
             requests:
               cpu: "100m"
