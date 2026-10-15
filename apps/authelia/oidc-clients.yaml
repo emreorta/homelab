@@ -1,5 +1,18 @@
+definitions:
+  user_attributes:
+    dozzle_roles:
+      expression: '["all"]'
 identity_providers:
   oidc:
+    claims_policies:
+      dozzle:
+        custom_claims:
+          dozzle_roles:
+            attribute: "dozzle_roles"
+    scopes:
+      dozzle_roles:
+        claims:
+          - "dozzle_roles"
     clients:
       - client_id: "actual-budget"
         client_name: "Actual Budget"
@@ -30,6 +43,21 @@ identity_providers:
         pkce_challenge_method: "S256"
         redirect_uris:
           - "https://timeline.${DOMAIN}/users/auth/openid_connect/callback"
+
+      - client_id: "dozzle"
+        client_name: "Dozzle"
+        client_secret: "$pbkdf2-sha512$310000$4jZJajBGyGhsy.EW1WZ9xg$yACLpM9yRD2t.TXVxZ7K5Wym6SKZ07EOoulifkaaTrG2CgOhRsZj4Bm/jlAsFTvqs9amwzTifS9i2zLs.MX9rg"
+        token_endpoint_auth_method: "client_secret_basic"
+        public: false
+        authorization_policy: "two_factor"
+        redirect_uris:
+          - "https://logs.${DOMAIN}/api/auth/callback"
+        claims_policy: "dozzle"
+        scopes:
+          - "openid"
+          - "profile"
+          - "email"
+          - "dozzle_roles"
 
       - client_id: "immich"
         client_name: "Immich"
