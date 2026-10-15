@@ -33,6 +33,19 @@ spec:
           env:
             - name: DOZZLE_MODE
               value: "k8s"
+            - name: DOZZLE_AUTH_PROVIDER
+              value: "oidc"
+            - name: DOZZLE_AUTH_OIDC_ISSUER
+              value: "https://auth.${DOMAIN}"
+            - name: DOZZLE_AUTH_OIDC_CLIENT_ID
+              value: "dozzle"
+            - name: DOZZLE_AUTH_OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: dozzle-app
+                  key: OIDC_CLIENT_SECRET
+            - name: DOZZLE_AUTH_OIDC_SCOPES
+              value: "dozzle_roles"
           resources:
             requests:
               cpu: "150m"
