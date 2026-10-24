@@ -39,18 +39,30 @@ spec:
         enabled: true
         allowCrossNamespace: true
     ports:
+      traefik:
+        http:
+          aliasHeadersStrategy: delete
+      metrics:
+        http:
+          aliasHeadersStrategy: delete
       web:
         http:
+          aliasHeadersStrategy: delete
           redirections:
             entryPoint:
               to: websecure
               scheme: https
               permanent: true
+      websecure:
+        http:
+          aliasHeadersStrategy: delete
       frp:
         port: 8081
         expose:
           default: true
         exposedPort: 8080
+        http:
+          aliasHeadersStrategy: delete
         forwardedHeaders:
           insecure: true
     resources:
