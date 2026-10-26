@@ -5,7 +5,9 @@
     ":dependencyDashboard"
   ],
   "kubernetes": {
-    "managerFilePatterns": ["/\\.ya?ml$/"]
+    "managerFilePatterns": [
+      "/\\.ya?ml$/"
+    ]
   },
   "helm-values": {
     "managerFilePatterns": [
@@ -19,13 +21,21 @@
       "/(^|/)helm-repositories\\.ya?ml$/"
     ]
   },
-  "reviewers": ["emreorta"],
-  "assignees": ["emreorta"],
+  "reviewers": [
+    "emreorta"
+  ],
+  "assignees": [
+    "emreorta"
+  ],
   "packageRules": [
     {
-     "matchManagers": ["kubernetes"],
-     "matchFileNames": ["**/gotk-components.yaml"],
-     "enabled": false
+      "matchManagers": [
+        "kubernetes"
+      ],
+      "matchFileNames": [
+        "**/gotk-components.yaml"
+      ],
+      "enabled": false
     }
   ]
 }
