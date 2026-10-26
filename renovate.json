@@ -20,5 +20,12 @@
     ]
   },
   "reviewers": ["emreorta"],
-  "assignees": ["emreorta"]
+  "assignees": ["emreorta"],
+  "packageRules": [
+    {
+     "matchManagers": ["kubernetes"],
+     "matchFileNames": ["**/gotk-components.yaml"],
+     "enabled": false
+    }
+  ]
 }
