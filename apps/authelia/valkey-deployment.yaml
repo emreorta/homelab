@@ -24,7 +24,7 @@ spec:
         kubernetes.io/hostname: k3s-2
       containers:
         - name: valkey
-          image: docker.io/valkey/valkey:9.1.2-alpine
+          image: docker.io/valkey/valkey:9.1.3-alpine
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 6379
