@@ -42,7 +42,7 @@ spec:
             - until redis-cli -h norish-redis ping; do sleep 2; done
       containers:
         - name: norish
-          image: norishapp/norish:v0.25.1-beta
+          image: norishapp/norish:v0.26.0-beta
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
