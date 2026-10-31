@@ -27,7 +27,7 @@ spec:
             app.kubernetes.io/name: traefik
     image:
       repository: traefik
-      tag: v3.7.16
+      tag: v3.7.17
       pullPolicy: IfNotPresent
     additionalArguments:
       - '--serversTransport.insecureSkipVerify=true'
