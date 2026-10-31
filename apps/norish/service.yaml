@@ -29,11 +29,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: norish-redis
+  name: norish-valkey
   namespace: norish
 spec:
   selector:
-    app: norish-redis
+    app: norish-valkey
   ports:
     - protocol: TCP
       port: 6379

@@ -5,7 +5,7 @@ resources:
   - secrets.yaml
   - pv-pvc.yaml
   - postgres.yaml
-  - redis.yaml
+  - valkey.yaml
   - obscura.yaml
   - deployment.yaml
   - service.yaml
