@@ -77,7 +77,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: norish-redis-pv
+  name: norish-valkey-pv
 spec:
   capacity:
     storage: 1Gi
@@ -86,10 +86,10 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-path
   claimRef:
-    name: norish-redis-pvc
+    name: norish-valkey-pvc
     namespace: norish
   hostPath:
-    path: /data/norish/redis
+    path: /data/norish/valkey
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -102,7 +102,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: norish-redis-pvc
+  name: norish-valkey-pvc
   namespace: norish
 spec:
   accessModes:
