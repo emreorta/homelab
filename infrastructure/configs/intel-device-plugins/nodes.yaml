@@ -1,0 +1,15 @@
+# flux applies only these label fields onto the existing nodes. everything
+# else stays as the kubelet set it
+apiVersion: v1
+kind: Node
+metadata:
+  name: k3s-controlplane
+  labels:
+    intel.feature.node.kubernetes.io/gpu: "true"
+---
+apiVersion: v1
+kind: Node
+metadata:
+  name: k3s-2
+  labels:
+    intel.feature.node.kubernetes.io/gpu: "true"
