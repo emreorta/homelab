@@ -16,8 +16,6 @@ services:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
       - ./caddy/data:/data/caddy
       - caddy-logs:/var/log/caddy
-    dns:
-      - 172.20.0.53
     networks:
       - proxy
     depends_on:
