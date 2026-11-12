@@ -13,7 +13,12 @@
     }
     crowdsec
     log {
-        output file /var/log/caddy/access.log
+        output file /var/log/caddy/access.log {
+            roll_size 10MiB
+            roll_interval 24h
+            roll_keep 3
+            roll_keep_for 72h
+        }
         format json
     }
 }
