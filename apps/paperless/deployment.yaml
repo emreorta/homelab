@@ -119,17 +119,26 @@ spec:
             httpGet:
               path: /
               port: 8000
+              httpHeaders:
+                - name: Host
+                  value: paperless.${DOMAIN}
             periodSeconds: 10
             failureThreshold: 60
           readinessProbe:
             httpGet:
               path: /
               port: 8000
+              httpHeaders:
+                - name: Host
+                  value: paperless.${DOMAIN}
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /
               port: 8000
+              httpHeaders:
+                - name: Host
+                  value: paperless.${DOMAIN}
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 5
