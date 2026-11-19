@@ -24,7 +24,7 @@ spec:
         kubernetes.io/hostname: k3s-controlplane
       containers:
         - name: valkey
-          image: valkey/valkey:9.1.3-alpine
+          image: valkey/valkey:9.2.0-alpine
           imagePullPolicy: IfNotPresent
           args:
             - --appendonly
