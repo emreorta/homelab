@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: opentodo-pv
+  namespace: opentodo
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-path
+  claimRef:
+    name: opentodo-pvc
+    namespace: opentodo
+  hostPath:
+    path: "/data/opentodo"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - k3s-controlplane
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: opentodo-pvc
+  namespace: opentodo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi

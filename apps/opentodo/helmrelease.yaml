@@ -1,0 +1,39 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: opentodo
+  namespace: opentodo
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: opentodo
+      version: "1.6.0"
+      sourceRef:
+        kind: HelmRepository
+        name: opentodo
+        namespace: flux-system
+  values:
+    env:
+      OPENTODO_BASE_URL: "https://todos.${DOMAIN}"
+      OPENTODO_OIDC_ISSUER: "https://auth.${DOMAIN}"
+      OPENTODO_OIDC_CLIENT_ID: "opentodo"
+      OPENTODO_OIDC_DISPLAY_NAME: "Authelia"
+    extraEnv:
+      - name: OPENTODO_OIDC_CLIENT_SECRET
+        valueFrom:
+          secretKeyRef:
+            name: opentodo-oidc
+            key: client-secret
+    setupToken:
+      generate: false
+      existingSecret: opentodo-setup-token
+    persistence:
+      existingClaim: opentodo-pvc
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi

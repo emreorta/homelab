@@ -16,6 +16,7 @@ resources:
   - miniflux
   - norish
   - ntfy
+  - opentodo
   - paperless
   - silverbullet
   - vaultwarden
