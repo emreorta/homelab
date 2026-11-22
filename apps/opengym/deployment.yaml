@@ -1,0 +1,124 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opengym
+  namespace: opengym
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: opengym
+  template:
+    metadata:
+      labels:
+        app: opengym
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k3s-3
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 1000
+      containers:
+        - name: api
+          image: ghcr.io/duartesantos8/opengym-api:1.4.5
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: DATA_DIR
+              value: /data
+            - name: RP_ID
+              value: "gym.${DOMAIN}"
+            - name: ORIGIN
+              value: "https://gym.${DOMAIN}"
+            - name: RP_NAME
+              value: openGym
+            - name: OIDC_ISSUER
+              value: "https://auth.${DOMAIN}"
+            - name: OIDC_CLIENT_ID
+              value: opengym
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: opengym-secrets
+                  key: OIDC_CLIENT_SECRET
+            - name: OIDC_LABEL
+              value: Authelia
+            - name: OIDC_SCOPES
+              value: "openid profile email groups"
+            - name: OIDC_ONLY
+              value: "1"
+            - name: ALLOW_GUEST
+              value: "0"
+            - name: FIRST_USER_ADMIN
+              value: "1"
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "100m"
+              memory: 128Mi
+            limits:
+              memory: 512Mi
+          volumeMounts:
+            - name: opengym-data
+              mountPath: /data
+        - name: web
+          image: ghcr.io/duartesantos8/opengym-web:1.4.5
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 101
+            runAsGroup: 101
+          env:
+            - name: NGINX_PORT
+              value: "8080"
+            # localhost because both containers share the pod network
+            - name: BACKEND
+              value: 127.0.0.1
+            - name: PORT
+              value: "3000"
+          ports:
+            - containerPort: 8080
+              name: web
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "50m"
+              memory: 32Mi
+            limits:
+              memory: 128Mi
+      volumes:
+        - name: opengym-data
+          persistentVolumeClaim:
+            claimName: opengym-pvc

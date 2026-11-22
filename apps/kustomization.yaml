@@ -16,6 +16,7 @@ resources:
   - miniflux
   - norish
   - ntfy
+  - opengym
   - opentodo
   - paperless
   - silverbullet

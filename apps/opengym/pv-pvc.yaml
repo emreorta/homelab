@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: opengym-pv
+  namespace: opengym
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-path
+  claimRef:
+    name: opengym-pvc
+    namespace: opengym
+  hostPath:
+    path: "/data/opengym"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - k3s-3
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: opengym-pvc
+  namespace: opengym
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
