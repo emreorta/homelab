@@ -54,3 +54,13 @@ metadata:
 spec:
   url: https://intel.github.io/helm-charts
   interval: 24h
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: opentodo
+  namespace: flux-system
+spec:
+  type: oci
+  url: oci://ghcr.io/opentodoapp/charts
+  interval: 24h

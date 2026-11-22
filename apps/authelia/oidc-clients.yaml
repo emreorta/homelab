@@ -99,6 +99,21 @@ identity_providers:
         redirect_uris:
           - "https://recipes.${DOMAIN}/api/auth/callback/oidc"
 
+      - client_id: "opentodo"
+        client_name: "OpenTodo"
+        client_secret: "$pbkdf2-sha512$310000$2mKmCakVGsvlHF8I1Q4x6g$obn2m44LrVvxjdxB8b7nj3MCAG0GGZHXuBVOIFwqWKuf2weWn6uENGPFBkpvybhlzadSPmBsEjbM5icbP3lNRw"
+        token_endpoint_auth_method: "client_secret_basic"
+        public: false
+        authorization_policy: "two_factor"
+        require_pkce: true
+        pkce_challenge_method: "S256"
+        redirect_uris:
+          - "https://todos.${DOMAIN}/api/v1/auth/oidc/callback"
+        scopes:
+          - "openid"
+          - "email"
+          - "profile"
+
       - client_id: "paperless"
         client_name: "Paperless"
         client_secret: "$pbkdf2-sha512$310000$56VleoEQzbhfpZcXzKxosA$DDF48hZAh913HMifhAOGlr4jq/nalWJtfZZoi/PWkKw7jVXQtng4SGy5Fkmy2pvbTqV5uVH5HImIRqEN7wKg0Q"
