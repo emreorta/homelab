@@ -34,7 +34,7 @@ spec:
             - -c
             - until pg_isready -h norish-postgres -U norish; do sleep 2; done
         - name: wait-for-valkey
-          image: valkey/valkey:9.2.0-alpine
+          image: valkey/valkey:9.2.1-alpine
           imagePullPolicy: IfNotPresent
           command:
             - sh
